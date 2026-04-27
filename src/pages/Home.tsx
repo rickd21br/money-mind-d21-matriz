@@ -1,6 +1,5 @@
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
 import { MobileShell } from "@/components/MobileShell";
-import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { ArrowDownCircle, ArrowUpCircle, Sparkles } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
