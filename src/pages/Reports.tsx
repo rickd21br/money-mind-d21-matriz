@@ -1,6 +1,6 @@
 import { MobileShell } from "@/components/MobileShell";
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 import { useMemo } from "react";
 import { format, parseISO } from "date-fns";
 
@@ -28,19 +28,81 @@ const Reports = () => {
   }, [transactions]);
 
   const balanceSeries = useMemo(() => {
+    if (transactions.length === 0) return [];
     const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
-    let acc = 0;
-    const map = new Map<string, number>();
+
+    // Agrupa por data
+    const byDate = new Map<string, { income: number; expense: number; count: number }>();
     for (const t of sorted) {
-      acc += t.type === "income" ? t.amount : -t.amount;
-      map.set(t.date, acc);
+      const cur = byDate.get(t.date) ?? { income: 0, expense: 0, count: 0 };
+      if (t.type === "income") cur.income += t.amount;
+      else cur.expense += t.amount;
+      cur.count += 1;
+      byDate.set(t.date, cur);
     }
-    return Array.from(map.entries()).map(([date, balance]) => ({
-      date,
-      label: format(parseISO(date), "dd/MM"),
-      balance,
-    }));
+
+    let acc = 0;
+    const series = Array.from(byDate.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, d]) => {
+        acc += d.income - d.expense;
+        return {
+          date,
+          label: format(parseISO(date), "dd/MM"),
+          balance: acc,
+          income: d.income,
+          expense: d.expense,
+          count: d.count,
+        };
+      });
+
+    // Garante ponto inicial e final quando há apenas uma data
+    if (series.length === 1) {
+      const only = series[0];
+      return [
+        { date: only.date, label: only.label, balance: 0, income: 0, expense: 0, count: 0 },
+        only,
+      ];
+    }
+    return series;
   }, [transactions]);
+
+  const yDomain = useMemo<[number | string, number | string]>(() => {
+    if (balanceSeries.length === 0) return [0, 0];
+    const vals = balanceSeries.map((s) => s.balance);
+    const min = Math.min(0, ...vals);
+    const max = Math.max(0, ...vals);
+    const pad = Math.max((max - min) * 0.1, 1);
+    return [Math.floor(min - pad), Math.ceil(max + pad)];
+  }, [balanceSeries]);
+
+  const BalanceTooltip = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    const p = payload[0].payload as {
+      label: string; balance: number; income: number; expense: number; count: number;
+    };
+    return (
+      <div className="rounded-xl border bg-popover px-3 py-2 text-xs shadow-md">
+        <div className="mb-1 font-semibold text-foreground">{p.label}</div>
+        <div className="flex justify-between gap-4">
+          <span className="text-muted-foreground">Saldo:</span>
+          <span className="font-semibold text-foreground">{formatCurrency(p.balance)}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-muted-foreground">Entradas:</span>
+          <span className="text-foreground">{formatCurrency(p.income)}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-muted-foreground">Saídas:</span>
+          <span className="text-foreground">{formatCurrency(p.expense)}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-muted-foreground">Lançamentos:</span>
+          <span className="text-foreground">{p.count}</span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <MobileShell>
@@ -91,8 +153,19 @@ const Reports = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={balanceSeries} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
                 <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} width={50} />
-                <Tooltip formatter={(v: number) => formatCurrency(v)} labelStyle={{ color: "hsl(var(--foreground))" }} />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  width={50}
+                  domain={yDomain}
+                  tickFormatter={(v: number) =>
+                    Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`
+                  }
+                />
+                <Tooltip content={<BalanceTooltip />} cursor={{ stroke: "hsl(var(--muted-foreground))", strokeDasharray: 3 }} />
+                <ReferenceLine y={0} stroke="hsl(var(--border))" strokeDasharray="3 3" />
                 <Line
                   type="monotone"
                   dataKey="balance"
