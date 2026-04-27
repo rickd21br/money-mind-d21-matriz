@@ -1,6 +1,6 @@
 import { MobileShell } from "@/components/MobileShell";
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, ReferenceLine, CartesianGrid } from "recharts";
 import { useMemo } from "react";
 import { format, parseISO } from "date-fns";
 
