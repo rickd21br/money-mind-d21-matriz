@@ -1,30 +1,16 @@
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
 import { MobileShell } from "@/components/MobileShell";
-import { ArrowDownCircle, ArrowUpCircle, Sparkles } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useUser, useJourney } from "@/hooks/useFinance";
 
 const Home = () => {
   const { transactions, totals } = useTransactions();
-  const { user } = useUser();
-  const { progress } = useJourney();
 
   const recent = transactions.slice(0, 8);
 
   return (
     <MobileShell>
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <p className="text-sm text-muted-foreground">Olá,</p>
-          <h1 className="text-2xl font-bold tracking-tight">{user.name} 👋</h1>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1.5 text-accent-foreground">
-          <Sparkles className="h-4 w-4 text-accent" />
-          <span className="text-xs font-semibold">{progress}/21 dias</span>
-        </div>
-      </header>
-
       <section className="relative overflow-hidden rounded-3xl gradient-card p-6 text-primary-foreground shadow-elevated">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
         <p className="text-sm font-medium opacity-80">Saldo atual</p>

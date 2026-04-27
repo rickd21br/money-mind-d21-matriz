@@ -19,11 +19,6 @@ const Profile = () => {
 
   return (
     <MobileShell>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Perfil</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Suas informações pessoais.</p>
-      </header>
-
       <section className="flex flex-col items-center rounded-3xl gradient-card p-6 text-primary-foreground shadow-elevated">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur">
           <UserIcon className="h-10 w-10" />
