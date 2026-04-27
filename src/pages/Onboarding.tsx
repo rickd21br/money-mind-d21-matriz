@@ -164,9 +164,8 @@ const Onboarding = () => {
 
         {/* HEADLINE */}
         <div className="mt-10">
-          <h1 className="text-left text-[28px] font-bold leading-tight text-white sm:text-4xl">
-            Transforme suas finanças em
-            <br />
+          <h1 className="text-left text-[24px] font-bold leading-tight text-white sm:text-4xl">
+            Transforme suas finanças em{" "}
             <span style={{ color: "hsl(var(--primary-glow))" }}>resultados reais.</span>
           </h1>
           <p className="mt-3 max-w-sm text-left text-sm text-white/75 sm:text-base">
