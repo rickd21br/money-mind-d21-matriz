@@ -145,38 +145,70 @@ const Reports = () => {
       </section>
 
       <section className="mt-5 rounded-3xl bg-card p-5 shadow-soft">
-        <h2 className="mb-3 text-base font-semibold">Evolução do saldo</h2>
+        <header className="mb-1">
+          <h2 className="text-base font-semibold">Evolução do saldo acumulado</h2>
+          <p className="text-xs text-muted-foreground">Veja como seu saldo mudou com o tempo</p>
+        </header>
         {balanceSeries.length === 0 ? (
           <p className="py-10 text-center text-sm text-muted-foreground">Sem dados ainda.</p>
         ) : (
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={balanceSeries} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
-                <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  width={50}
-                  domain={yDomain}
-                  tickFormatter={(v: number) =>
-                    Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`
-                  }
-                />
-                <Tooltip content={<BalanceTooltip />} cursor={{ stroke: "hsl(var(--muted-foreground))", strokeDasharray: 3 }} />
-                <ReferenceLine y={0} stroke="hsl(var(--border))" strokeDasharray="3 3" />
-                <Line
-                  type="monotone"
-                  dataKey="balance"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={3}
-                  dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <>
+            <div className="mt-3 h-60 -mx-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={balanceSeries} margin={{ top: 12, right: 16, bottom: 0, left: 4 }}>
+                  <defs>
+                    <linearGradient id="balanceFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} opacity={0.5} />
+                  <XAxis
+                    dataKey="label"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={16}
+                    tickMargin={6}
+                  />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    width={64}
+                    domain={yDomain}
+                    tickFormatter={(v: number) =>
+                      Math.abs(v) >= 1000 ? `R$ ${(v / 1000).toFixed(1)}k` : `R$ ${v}`
+                    }
+                  />
+                  <Tooltip
+                    content={<BalanceTooltip />}
+                    cursor={{ stroke: "hsl(var(--muted-foreground))", strokeDasharray: 3 }}
+                    wrapperStyle={{ outline: "none", zIndex: 50 }}
+                    allowEscapeViewBox={{ x: false, y: true }}
+                    offset={12}
+                  />
+                  <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeOpacity={0.4} strokeDasharray="4 4" />
+                  <Area
+                    type="monotone"
+                    dataKey="balance"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2.5}
+                    fill="url(#balanceFill)"
+                    dot={{ fill: "hsl(var(--primary))", stroke: "hsl(var(--card))", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: "hsl(var(--card))", strokeWidth: 2 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            {balanceSeries.length < 3 && (
+              <p className="mt-3 rounded-xl bg-muted/50 px-3 py-2 text-center text-xs text-muted-foreground">
+                Adicione mais lançamentos em dias diferentes para visualizar melhor sua evolução.
+              </p>
+            )}
+          </>
         )}
       </section>
     </MobileShell>
