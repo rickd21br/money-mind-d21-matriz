@@ -20,17 +20,22 @@ function TabLink({ to, label, icon: Icon, end }: { to: string; label: string; ic
       end={end}
       className={({ isActive }) =>
         cn(
-          "flex flex-1 flex-col items-center justify-center gap-0.5 py-1 transition-smooth",
+          "flex flex-1 flex-col items-center justify-end gap-1 pt-1 transition-smooth",
           isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
         )
       }
       aria-label={label}
     >
       {({ isActive }) => (
-        <Icon
-          className={cn("h-5 w-5 transition-smooth", isActive && "scale-110")}
-          strokeWidth={isActive ? 2.5 : 2}
-        />
+        <>
+          <Icon
+            className={cn("h-5 w-5 transition-smooth", isActive && "scale-110")}
+            strokeWidth={isActive ? 2.5 : 2}
+          />
+          <span className={cn("text-[10px] leading-none", isActive && "font-semibold")}>
+            {label}
+          </span>
+        </>
       )}
     </NavLink>
   );
@@ -39,17 +44,17 @@ function TabLink({ to, label, icon: Icon, end }: { to: string; label: string; ic
 export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-xl safe-bottom">
-      <div className="relative mx-auto flex h-14 max-w-md items-center px-2 pb-2 pt-1">
+      <div className="relative mx-auto flex h-16 max-w-md items-end px-2 pb-2">
         {/* Left icons */}
-        <div className="flex flex-1 items-center">
+        <div className="flex flex-1 items-end">
           {leftTabs.map((t) => (
             <TabLink key={t.to} {...t} />
           ))}
         </div>
 
-        {/* Center floating action button */}
-        <div className="flex w-20 items-start justify-center">
-          <div className="pointer-events-none p-2">
+        {/* Center floating action button + label */}
+        <div className="flex w-20 flex-col items-center justify-end pb-0">
+          <div className="pointer-events-none p-1">
             <AddTransactionDialog
               trigger={
                 <button
@@ -67,10 +72,13 @@ export function BottomNav() {
               }
             />
           </div>
+          <span className="-mt-3 text-[10px] font-semibold leading-none text-primary">
+            Novo
+          </span>
         </div>
 
         {/* Right icons */}
-        <div className="flex flex-1 items-center">
+        <div className="flex flex-1 items-end">
           {rightTabs.map((t) => (
             <TabLink key={t.to} {...t} />
           ))}
