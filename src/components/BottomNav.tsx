@@ -20,16 +20,17 @@ function TabLink({ to, label, icon: Icon, end }: { to: string; label: string; ic
       end={end}
       className={({ isActive }) =>
         cn(
-          "flex min-w-[60px] flex-col items-center gap-1 rounded-2xl px-2 py-2 transition-smooth",
+          "flex flex-1 flex-col items-center justify-center gap-0.5 py-1 transition-smooth",
           isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
         )
       }
+      aria-label={label}
     >
       {({ isActive }) => (
-        <>
-          <Icon className={cn("h-5 w-5 transition-smooth", isActive && "scale-110")} strokeWidth={isActive ? 2.5 : 2} />
-          <span className={cn("text-[11px] font-medium", isActive && "font-semibold")}>{label}</span>
-        </>
+        <Icon
+          className={cn("h-5 w-5 transition-smooth", isActive && "scale-110")}
+          strokeWidth={isActive ? 2.5 : 2}
+        />
       )}
     </NavLink>
   );
@@ -38,30 +39,31 @@ function TabLink({ to, label, icon: Icon, end }: { to: string; label: string; ic
 export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-xl safe-bottom">
-      <div className="relative mx-auto flex max-w-md items-end justify-between px-3 pb-2 pt-2">
-        <div className="flex flex-1 items-center justify-around">
+      <div className="relative mx-auto flex h-14 max-w-md items-center px-2 pb-2 pt-1">
+        {/* Left icons */}
+        <div className="flex flex-1 items-center">
           {leftTabs.map((t) => (
             <TabLink key={t.to} {...t} />
           ))}
         </div>
 
-        {/* Central elevated action */}
-        <div className="flex w-[96px] flex-col items-center">
+        {/* Center elevated button */}
+        <div className="flex w-16 items-start justify-center">
           <AddTransactionDialog
             trigger={
               <button
                 type="button"
                 aria-label="Novo Lançamento"
-                className="-mt-8 flex h-16 w-16 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-floating ring-4 ring-card transition-smooth hover:opacity-90 active:scale-95"
+                className="-mt-7 flex h-12 w-12 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-floating ring-4 ring-card transition-smooth hover:opacity-90 active:scale-95"
               >
-                <Plus className="h-7 w-7" strokeWidth={2.5} />
+                <Plus className="h-6 w-6" strokeWidth={2.5} />
               </button>
             }
           />
-          <span className="mt-1 text-[11px] font-semibold text-primary">Novo Lançamento</span>
         </div>
 
-        <div className="flex flex-1 items-center justify-around">
+        {/* Right icons */}
+        <div className="flex flex-1 items-center">
           {rightTabs.map((t) => (
             <TabLink key={t.to} {...t} />
           ))}
