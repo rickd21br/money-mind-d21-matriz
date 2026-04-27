@@ -16,7 +16,8 @@ const queryClient = new QueryClient();
 
 const RequireOnboarding = ({ children }: { children: ReactNode }) => {
   const [onboarded] = useStorage<boolean>("d21.onboarded", false);
-  if (!onboarded) return <Navigate to="/bem-vindo" replace />;
+  const legacy = typeof window !== "undefined" && localStorage.getItem("onboarding_completed") === "true";
+  if (!onboarded && !legacy) return <Navigate to="/bem-vindo" replace />;
   return <>{children}</>;
 };
 
