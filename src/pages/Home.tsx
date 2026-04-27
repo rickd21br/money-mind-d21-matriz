@@ -85,9 +85,9 @@ const Home = () => {
         )}
       </section>
 
-      </section>
-
+    </MobileShell>
   );
 };
+
 
 export default Home;
