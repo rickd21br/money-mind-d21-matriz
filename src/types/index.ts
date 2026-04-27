@@ -4,6 +4,7 @@ export interface Transaction {
   id: string;
   type: TransactionType;
   amount: number;
+  group?: string;
   category: string;
   description: string;
   date: string; // ISO
