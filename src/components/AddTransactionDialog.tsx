@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import { Plus, ArrowDownCircle, ArrowUpCircle, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CATEGORIES, TransactionType } from "@/types";
-import { useTransactions } from "@/hooks/useFinance";
+import { TransactionType } from "@/types";
+import { useTransactions, useCategories } from "@/hooks/useFinance";
 import { toast } from "sonner";
 
 interface Props {
@@ -17,19 +17,62 @@ interface Props {
 
 export function AddTransactionDialog({ trigger }: Props) {
   const { addTransaction } = useTransactions();
+  const { getGroups, getCategories, addCategory } = useCategories();
+
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<TransactionType>("expense");
+  const [group, setGroup] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState<string>(CATEGORIES[0]);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
 
+  const [creatingCat, setCreatingCat] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+
+  const groups = useMemo(() => getGroups(type), [getGroups, type]);
+  const categories = useMemo(
+    () => (group ? getCategories(type, group) : []),
+    [getCategories, type, group]
+  );
+
+  // Reset group/category when type changes
+  useEffect(() => {
+    setGroup("");
+    setCategory("");
+    setCreatingCat(false);
+  }, [type]);
+
+  // Reset category when group changes
+  useEffect(() => {
+    setCategory("");
+    setCreatingCat(false);
+    setNewCatName("");
+  }, [group]);
+
   const reset = () => {
     setType("expense");
+    setGroup("");
+    setCategory("");
     setAmount("");
-    setCategory(CATEGORIES[0]);
     setDescription("");
     setDate(new Date().toISOString().slice(0, 10));
+    setCreatingCat(false);
+    setNewCatName("");
+  };
+
+  const handleCreateCategory = () => {
+    const name = newCatName.trim();
+    if (!name) {
+      toast.error("Informe um nome para a categoria");
+      return;
+    }
+    if (!group) return;
+    addCategory(type, group, name);
+    setCategory(name);
+    setCreatingCat(false);
+    setNewCatName("");
+    toast.success("Categoria criada!");
   };
 
   const submit = (e: React.FormEvent) => {
@@ -39,14 +82,22 @@ export function AddTransactionDialog({ trigger }: Props) {
       toast.error("Informe um valor válido");
       return;
     }
-    addTransaction({ type, amount: value, category, description: description.trim(), date });
+    if (!group) {
+      toast.error("Escolha um grupo");
+      return;
+    }
+    if (!category) {
+      toast.error("Escolha uma categoria");
+      return;
+    }
+    addTransaction({ type, amount: value, group, category, description: description.trim(), date });
     toast.success(type === "income" ? "Entrada registrada!" : "Saída registrada!");
     reset();
     setOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) reset(); }}>
       <DialogTrigger asChild>
         {trigger ?? (
           <Button
@@ -58,11 +109,12 @@ export function AddTransactionDialog({ trigger }: Props) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-sm rounded-3xl">
+      <DialogContent className="max-w-sm rounded-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Nova transação</DialogTitle>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
+          {/* Step 1: Type */}
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -97,23 +149,80 @@ export function AddTransactionDialog({ trigger }: Props) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="h-12 rounded-xl text-lg"
-              autoFocus
             />
           </div>
 
+          {/* Step 2: Group */}
           <div className="space-y-1.5">
-            <Label>Categoria</Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Label>Grupo</Label>
+            <Select value={group} onValueChange={setGroup}>
               <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue />
+                <SelectValue placeholder="Escolha um grupo" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                {groups.map((g) => (
+                  <SelectItem key={g} value={g}>{g}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+
+          {/* Step 3: Category (filtered) */}
+          {group && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label>Categoria</Label>
+                {!creatingCat && (
+                  <button
+                    type="button"
+                    onClick={() => setCreatingCat(true)}
+                    className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                  >
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    Nova categoria
+                  </button>
+                )}
+              </div>
+
+              {creatingCat ? (
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Nome da categoria"
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    className="h-12 rounded-xl"
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleCreateCategory}
+                    className="h-12 rounded-xl"
+                  >
+                    Criar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => { setCreatingCat(false); setNewCatName(""); }}
+                    className="h-12 rounded-xl"
+                  >
+                    ×
+                  </Button>
+                </div>
+              ) : (
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue placeholder="Escolha uma categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="description">Descrição</Label>
