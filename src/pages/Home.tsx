@@ -85,8 +85,8 @@ const Home = () => {
         )}
       </section>
 
-      <AddTransactionDialog />
-    </MobileShell>
+      </section>
+
   );
 };
 
