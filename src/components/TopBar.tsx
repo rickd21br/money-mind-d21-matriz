@@ -30,6 +30,16 @@ export function TopBar() {
       .join("")
       .toUpperCase();
 
+  const abbreviateName = (full: string) => {
+    const parts = full.trim().split(/\s+/).filter(Boolean);
+    if (parts.length <= 2) return full;
+    const first = parts[0];
+    const last = parts[parts.length - 1];
+    const middle = parts.slice(1, -1).map((p) => `${p[0].toUpperCase()}.`).join(" ");
+    return `${first} ${middle} ${last}`;
+  };
+  const displayName = user.name && user.name.length > 22 ? abbreviateName(user.name) : user.name;
+
   const toggleNotifications = () => {
     const next = !notifications;
     setNotifications(next);
@@ -111,7 +121,7 @@ export function TopBar() {
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-tight">{user.name || "Visitante"}</p>
+            <p className="truncate text-sm font-semibold leading-tight">{displayName || "Visitante"}</p>
             <p className="truncate text-xs text-muted-foreground">{user.email || "sem email"}</p>
           </div>
           <div className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
