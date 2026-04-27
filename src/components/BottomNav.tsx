@@ -47,19 +47,26 @@ export function BottomNav() {
           ))}
         </div>
 
-        {/* Center elevated button */}
-        <div className="flex w-16 items-start justify-center">
-          <AddTransactionDialog
-            trigger={
-              <button
-                type="button"
-                aria-label="Novo Lançamento"
-                className="-mt-7 flex h-12 w-12 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-floating ring-4 ring-card transition-smooth hover:opacity-90 active:scale-95"
-              >
-                <Plus className="h-6 w-6" strokeWidth={2.5} />
-              </button>
-            }
-          />
+        {/* Center floating action button */}
+        <div className="flex w-20 items-start justify-center">
+          <div className="pointer-events-none p-2">
+            <AddTransactionDialog
+              trigger={
+                <button
+                  type="button"
+                  aria-label="Novo Lançamento"
+                  style={{
+                    transform: "translateY(-18px)",
+                    backgroundColor: "hsl(var(--primary))",
+                    boxShadow: "0px 8px 20px rgba(0,0,0,0.18)",
+                  }}
+                  className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full text-primary-foreground transition-smooth hover:opacity-90 active:scale-95"
+                >
+                  <Plus className="h-6 w-6 text-white" strokeWidth={2.75} />
+                </button>
+              }
+            />
+          </div>
         </div>
 
         {/* Right icons */}
