@@ -153,8 +153,19 @@ const Reports = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={balanceSeries} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
                 <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} width={50} />
-                <Tooltip formatter={(v: number) => formatCurrency(v)} labelStyle={{ color: "hsl(var(--foreground))" }} />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  width={50}
+                  domain={yDomain}
+                  tickFormatter={(v: number) =>
+                    Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`
+                  }
+                />
+                <Tooltip content={<BalanceTooltip />} cursor={{ stroke: "hsl(var(--muted-foreground))", strokeDasharray: 3 }} />
+                <ReferenceLine y={0} stroke="hsl(var(--border))" strokeDasharray="3 3" />
                 <Line
                   type="monotone"
                   dataKey="balance"
