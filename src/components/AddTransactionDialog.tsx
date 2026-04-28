@@ -180,16 +180,14 @@ export function AddTransactionDialog({ trigger }: Props) {
                 {groups.map((g) => {
                   const info = getGroupInfo(type, g);
                   return (
-                    <SelectItem key={g} value={g} className="py-2.5">
-                      <div className="flex flex-col">
+                    <div key={g} className="flex items-center gap-1 pr-2">
+                      <SelectItem value={g} className="flex-1 py-2.5">
                         <span className="text-sm font-medium">{g}</span>
-                        {info && (
-                          <span className="text-[11px] leading-snug text-muted-foreground line-clamp-2">
-                            {info}
-                          </span>
-                        )}
-                      </div>
-                    </SelectItem>
+                      </SelectItem>
+                      {info && (
+                        <InfoHint title={g} description={info} />
+                      )}
+                    </div>
                   );
                 })}
               </SelectContent>
