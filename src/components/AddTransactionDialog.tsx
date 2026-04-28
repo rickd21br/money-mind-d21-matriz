@@ -258,16 +258,14 @@ export function AddTransactionDialog({ trigger }: Props) {
                     {categories.map((c) => {
                       const info = getCategoryInfo(type, c);
                       return (
-                        <SelectItem key={c} value={c} className="py-2.5">
-                          <div className="flex flex-col">
+                        <div key={c} className="flex items-center gap-1 pr-2">
+                          <SelectItem value={c} className="flex-1 py-2.5">
                             <span className="text-sm font-medium">{c}</span>
-                            {info && (
-                              <span className="text-[11px] leading-snug text-muted-foreground line-clamp-2">
-                                {info}
-                              </span>
-                            )}
-                          </div>
-                        </SelectItem>
+                          </SelectItem>
+                          {info && (
+                            <InfoHint title={c} description={info} />
+                          )}
+                        </div>
                       );
                     })}
                   </SelectContent>
