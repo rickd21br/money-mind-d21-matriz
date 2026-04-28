@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { TransactionType } from "@/types";
 import { useTransactions, useCategories } from "@/hooks/useFinance";
 import { toast } from "sonner";
+import { InfoHint } from "./InfoHint";
+import { getGroupInfo, getCategoryInfo } from "@/data/categoryInfo";
 
 interface Props {
   trigger?: React.ReactNode;
@@ -154,15 +156,42 @@ export function AddTransactionDialog({ trigger }: Props) {
 
           {/* Step 2: Group */}
           <div className="space-y-1.5">
-            <Label>Grupo</Label>
+            <div className="flex items-center gap-1.5">
+              <Label>Grupo</Label>
+              <InfoHint
+                title="O que é um Grupo?"
+                description="Grupo é a 'gaveta' grande onde você guarda tipos parecidos de gasto ou ganho. Ex.: 'Casa' reúne aluguel, energia, internet. Ajuda a enxergar para onde vai o seu dinheiro em blocos."
+                example="Pense no grupo como o capítulo de um livro, e nas categorias como as páginas dele."
+              />
+              {group && getGroupInfo(type, group) && (
+                <span className="ml-auto">
+                  <InfoHint
+                    title={group}
+                    description={getGroupInfo(type, group) ?? ""}
+                  />
+                </span>
+              )}
+            </div>
             <Select value={group} onValueChange={setGroup}>
               <SelectTrigger className="h-12 rounded-xl">
                 <SelectValue placeholder="Escolha um grupo" />
               </SelectTrigger>
               <SelectContent>
-                {groups.map((g) => (
-                  <SelectItem key={g} value={g}>{g}</SelectItem>
-                ))}
+                {groups.map((g) => {
+                  const info = getGroupInfo(type, g);
+                  return (
+                    <SelectItem key={g} value={g} className="py-2.5">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{g}</span>
+                        {info && (
+                          <span className="text-[11px] leading-snug text-muted-foreground line-clamp-2">
+                            {info}
+                          </span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -171,7 +200,20 @@ export function AddTransactionDialog({ trigger }: Props) {
           {group && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label>Categoria</Label>
+                <div className="flex items-center gap-1.5">
+                  <Label>Categoria</Label>
+                  <InfoHint
+                    title="O que é uma Categoria?"
+                    description="Categoria é o detalhe específico dentro do grupo escolhido. Ex.: dentro de 'Casa', você tem 'Aluguel', 'Energia', 'Internet'. É o que aparece nos seus relatórios."
+                    example="Quanto mais precisa a categoria, mais clareza você tem sobre seus hábitos."
+                  />
+                  {category && getCategoryInfo(type, category) && (
+                    <InfoHint
+                      title={category}
+                      description={getCategoryInfo(type, category) ?? ""}
+                    />
+                  )}
+                </div>
                 {!creatingCat && (
                   <button
                     type="button"
@@ -215,9 +257,21 @@ export function AddTransactionDialog({ trigger }: Props) {
                     <SelectValue placeholder="Escolha uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
+                    {categories.map((c) => {
+                      const info = getCategoryInfo(type, c);
+                      return (
+                        <SelectItem key={c} value={c} className="py-2.5">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{c}</span>
+                            {info && (
+                              <span className="text-[11px] leading-snug text-muted-foreground line-clamp-2">
+                                {info}
+                              </span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               )}
