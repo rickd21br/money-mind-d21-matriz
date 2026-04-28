@@ -15,6 +15,8 @@ const inspirationIcons = {
   couple: HeartHandshake,
 };
 
+const inspirationPalette = ["bg-primary", "bg-accent", "bg-secondary", "bg-muted"];
+
 function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const { setProgress, isCompleted, getProgress } = useAudioProgress();
@@ -129,30 +131,39 @@ function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boole
   );
 }
 
-function InspirationCard({ item }: { item: InspirationAudio }) {
+function InspirationCard({ item, index, active }: { item: InspirationAudio; index: number; active: boolean }) {
   const Icon = inspirationIcons[item.icon];
 
   return (
-    <article className="min-w-[78%] rounded-3xl bg-card p-4 shadow-soft transition-smooth first:ml-0 -ml-5">
-      <header className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-1 flex items-center gap-2">
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-              {item.format}
-            </span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{item.duration}</span>
+    <article
+      className={cn(
+        "relative flex min-h-[320px] min-w-[76%] snap-center flex-col justify-between overflow-hidden rounded-[1.4rem] border border-border/60 bg-card p-5 shadow-soft transition-smooth first:ml-0 -ml-8",
+        active ? "z-20 scale-100 opacity-100 shadow-elevated" : "z-10 scale-[0.94] opacity-80"
+      )}
+    >
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
+
+      <header className="relative space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-primary-foreground shadow-soft", inspirationPalette[index % inspirationPalette.length])}>
+            <Icon className="h-5 w-5" />
           </div>
-          <h3 className="text-sm font-bold leading-tight">{item.title}</h3>
-          <p className="text-xs text-muted-foreground">{item.author}</p>
+          <div className="rounded-full bg-secondary/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">
+            {item.format}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[11px] font-semibold text-muted-foreground">{item.duration}</p>
+          <h3 className="mt-2 text-xl font-bold leading-[1.08] tracking-tight">{item.title}</h3>
+          <p className="mt-1 text-sm font-semibold text-primary">{item.author}</p>
         </div>
       </header>
 
-      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
+      <div className="relative mt-5 space-y-3">
+        <p className="text-sm font-medium leading-snug">{item.description}</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">{item.hook}</p>
 
-      <div className="mt-3">
         {item.src ? (
           <audio
             src={item.src}
@@ -162,7 +173,7 @@ function InspirationCard({ item }: { item: InspirationAudio }) {
             className="w-full"
           />
         ) : (
-          <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3 text-center text-[11px] text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-3 text-center text-[11px] font-medium text-muted-foreground">
             Player reservado para o áudio do acervo.
           </div>
         )}
@@ -174,12 +185,25 @@ function InspirationCard({ item }: { item: InspirationAudio }) {
 const Audios = () => {
   const { state } = useAudioProgress();
   const inspirationScrollRef = useRef<HTMLDivElement>(null);
+  const [activeInspiration, setActiveInspiration] = useState(0);
 
   const scrollInspiration = (direction: "left" | "right") => {
+    const nextIndex = direction === "left"
+      ? Math.max(activeInspiration - 1, 0)
+      : Math.min(activeInspiration + 1, INSPIRATION_LIBRARY.length - 1);
+
+    setActiveInspiration(nextIndex);
     inspirationScrollRef.current?.scrollBy({
-      left: direction === "left" ? -260 : 260,
+      left: direction === "left" ? -238 : 238,
       behavior: "smooth",
     });
+  };
+
+  const handleInspirationScroll = () => {
+    const el = inspirationScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / INSPIRATION_LIBRARY.length;
+    setActiveInspiration(Math.min(INSPIRATION_LIBRARY.length - 1, Math.round(el.scrollLeft / cardWidth)));
   };
 
   return (
@@ -205,17 +229,17 @@ const Audios = () => {
       </section>
 
       <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-end justify-between gap-3">
           <div>
             <h2 className="text-base font-bold tracking-tight">Acervo de best sellers</h2>
-            <p className="text-xs text-muted-foreground">Role para explorar as referências</p>
+            <p className="text-xs text-muted-foreground">Toque, arraste ou use as setas para explorar</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               aria-label="Voltar referências"
               onClick={() => scrollInspiration("left")}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/90 text-primary shadow-soft transition-smooth hover:bg-secondary"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -223,7 +247,7 @@ const Audios = () => {
               type="button"
               aria-label="Avançar referências"
               onClick={() => scrollInspiration("right")}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/90 text-primary shadow-soft transition-smooth hover:bg-secondary"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -232,10 +256,11 @@ const Audios = () => {
 
         <div
           ref={inspirationScrollRef}
-          className="flex snap-x snap-mandatory overflow-x-auto py-2 pl-5 pr-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onScroll={handleInspirationScroll}
+          className="flex snap-x snap-mandatory overflow-x-auto px-8 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {INSPIRATION_LIBRARY.map((item) => (
-            <InspirationCard key={item.id} item={item} />
+          {INSPIRATION_LIBRARY.map((item, index) => (
+            <InspirationCard key={item.id} item={item} index={index} active={index === activeInspiration} />
           ))}
         </div>
       </section>
