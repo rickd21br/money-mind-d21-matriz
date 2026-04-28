@@ -15,6 +15,8 @@ const inspirationIcons = {
   couple: HeartHandshake,
 };
 
+const inspirationPalette = ["bg-primary", "bg-accent", "bg-secondary", "bg-muted"];
+
 function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const { setProgress, isCompleted, getProgress } = useAudioProgress();
@@ -129,7 +131,58 @@ function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boole
   );
 }
 
-function InspirationCard({ item }: { item: InspirationAudio }) {
+function InspirationCard({ item, index, active }: { item: InspirationAudio; index: number; active: boolean }) {
+  const Icon = inspirationIcons[item.icon];
+
+  return (
+    <article
+      className={cn(
+        "relative flex min-h-[320px] min-w-[76%] snap-center flex-col justify-between overflow-hidden rounded-[1.4rem] border border-border/60 bg-card p-5 shadow-soft transition-smooth first:ml-0 -ml-8",
+        active ? "z-20 scale-100 opacity-100 shadow-elevated" : "z-10 scale-[0.94] opacity-80"
+      )}
+    >
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
+
+      <header className="relative space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-primary-foreground shadow-soft", inspirationPalette[index % inspirationPalette.length])}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="rounded-full bg-secondary/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">
+            {item.format}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[11px] font-semibold text-muted-foreground">{item.duration}</p>
+          <h3 className="mt-2 text-xl font-bold leading-[1.08] tracking-tight">{item.title}</h3>
+          <p className="mt-1 text-sm font-semibold text-primary">{item.author}</p>
+        </div>
+      </header>
+
+      <div className="relative mt-5 space-y-3">
+        <p className="text-sm font-medium leading-snug">{item.description}</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">{item.hook}</p>
+
+        {item.src ? (
+          <audio
+            src={item.src}
+            controls
+            controlsList="nodownload noplaybackrate"
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-full"
+          />
+        ) : (
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-3 text-center text-[11px] font-medium text-muted-foreground">
+            Player reservado para o áudio do acervo.
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function LegacyInspirationCard({ item }: { item: InspirationAudio }) {
   const Icon = inspirationIcons[item.icon];
 
   return (
