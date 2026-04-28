@@ -5,7 +5,8 @@ import { MentorCard } from "@/components/MentorCard";
 import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
-import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2 } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator } from "lucide-react";
+import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Transaction } from "@/types";
@@ -64,6 +65,34 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* ATALHOS — Áudios + Calculadora */}
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <Link
+          to="/audios"
+          className="group flex flex-col gap-2 rounded-2xl bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Headphones className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold leading-tight">Áudios</p>
+            <p className="text-[11px] text-muted-foreground">Capítulos do ebook</p>
+          </div>
+        </Link>
+        <Link
+          to="/calculadora"
+          className="group flex flex-col gap-2 rounded-2xl bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Calculator className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold leading-tight">Calculadora</p>
+            <p className="text-[11px] text-muted-foreground">Juros, FIRE, dívidas</p>
+          </div>
+        </Link>
+      </div>
 
       <div className="mt-5"><MentorCard /></div>
 
