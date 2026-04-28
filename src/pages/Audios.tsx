@@ -227,12 +227,25 @@ function LegacyInspirationCard({ item }: { item: InspirationAudio }) {
 const Audios = () => {
   const { state } = useAudioProgress();
   const inspirationScrollRef = useRef<HTMLDivElement>(null);
+  const [activeInspiration, setActiveInspiration] = useState(0);
 
   const scrollInspiration = (direction: "left" | "right") => {
+    const nextIndex = direction === "left"
+      ? Math.max(activeInspiration - 1, 0)
+      : Math.min(activeInspiration + 1, INSPIRATION_LIBRARY.length - 1);
+
+    setActiveInspiration(nextIndex);
     inspirationScrollRef.current?.scrollBy({
-      left: direction === "left" ? -260 : 260,
+      left: direction === "left" ? -238 : 238,
       behavior: "smooth",
     });
+  };
+
+  const handleInspirationScroll = () => {
+    const el = inspirationScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / INSPIRATION_LIBRARY.length;
+    setActiveInspiration(Math.min(INSPIRATION_LIBRARY.length - 1, Math.round(el.scrollLeft / cardWidth)));
   };
 
   return (
@@ -258,17 +271,17 @@ const Audios = () => {
       </section>
 
       <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-end justify-between gap-3">
           <div>
             <h2 className="text-base font-bold tracking-tight">Acervo de best sellers</h2>
-            <p className="text-xs text-muted-foreground">Role para explorar as referências</p>
+            <p className="text-xs text-muted-foreground">Toque, arraste ou use as setas para explorar</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               aria-label="Voltar referências"
               onClick={() => scrollInspiration("left")}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/90 text-primary shadow-soft transition-smooth hover:bg-secondary"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -276,7 +289,7 @@ const Audios = () => {
               type="button"
               aria-label="Avançar referências"
               onClick={() => scrollInspiration("right")}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/90 text-primary shadow-soft transition-smooth hover:bg-secondary"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -285,10 +298,11 @@ const Audios = () => {
 
         <div
           ref={inspirationScrollRef}
-          className="flex snap-x snap-mandatory overflow-x-auto py-2 pl-5 pr-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onScroll={handleInspirationScroll}
+          className="flex snap-x snap-mandatory overflow-x-auto px-8 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {INSPIRATION_LIBRARY.map((item) => (
-            <InspirationCard key={item.id} item={item} />
+          {INSPIRATION_LIBRARY.map((item, index) => (
+            <InspirationCard key={item.id} item={item} index={index} active={index === activeInspiration} />
           ))}
         </div>
       </section>
