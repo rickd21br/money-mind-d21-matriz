@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { AUDIO_CHAPTERS, AudioChapter } from "@/data/audioChapters";
 import { INSPIRATION_LIBRARY, InspirationAudio } from "@/data/inspirationLibrary";
 import { useAudioProgress } from "@/hooks/useAudioProgress";
-import { Headphones, Lightbulb, Target, Sparkles, Check, Lock, BookOpen, Brain, Gem, HeartHandshake, Leaf } from "lucide-react";
+import { Headphones, Lightbulb, Target, Sparkles, Check, Lock, Brain, Gem, HeartHandshake, Leaf, ChevronLeft, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -133,7 +133,7 @@ function InspirationCard({ item }: { item: InspirationAudio }) {
   const Icon = inspirationIcons[item.icon];
 
   return (
-    <article className="rounded-3xl bg-card p-4 shadow-soft transition-smooth">
+    <article className="min-w-[78%] rounded-3xl bg-card p-4 shadow-soft transition-smooth first:ml-0 -ml-5">
       <header className="flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
           <Icon className="h-5 w-5" />
@@ -173,15 +173,26 @@ function InspirationCard({ item }: { item: InspirationAudio }) {
 
 const Audios = () => {
   const { state } = useAudioProgress();
+  const inspirationScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollInspiration = (direction: "left" | "right") => {
+    inspirationScrollRef.current?.scrollBy({
+      left: direction === "left" ? -260 : 260,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <MobileShell>
       <header className="mb-5">
         <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-          <Headphones className="h-6 w-6 text-primary" /> Áudios do Ebook
+          <Headphones className="h-6 w-6 text-primary" /> Bônus Exclusivo
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ouça os capítulos, conquiste XP e fortaleça sua jornada.
+          Biblioteca de Inspiração
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Referências em áudio para ampliar seus conhecimentos, entrar com conforto nesse universo literário e desenvolver novas ideias com os melhores autores do segmento — onde e quando puder.
         </p>
       </header>
 
@@ -194,18 +205,35 @@ const Audios = () => {
       </section>
 
       <section className="mb-6">
-        <div className="mb-3 rounded-3xl bg-card p-5 shadow-soft">
-          <div className="flex items-center gap-2 text-primary">
-            <BookOpen className="h-5 w-5" />
-            <p className="text-xs font-bold uppercase tracking-wider">Bônus Exclusivo</p>
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-bold tracking-tight">Acervo de best sellers</h2>
+            <p className="text-xs text-muted-foreground">Role para explorar as referências</p>
           </div>
-          <h2 className="mt-2 text-xl font-bold tracking-tight">Biblioteca de Inspiração</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Uma trilha de referências para ampliar seu conhecimento e entrar com conforto no universo literário da prosperidade. A equipe reuniu best sellers em áudio para você ouvir onde e quando puder, absorvendo ideias dos autores mais conceituados do segmento.
-          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Voltar referências"
+              onClick={() => scrollInspiration("left")}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Avançar referências"
+              onClick={() => scrollInspiration("right")}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-primary transition-smooth hover:bg-secondary/80"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-3">
+        <div
+          ref={inspirationScrollRef}
+          className="flex snap-x snap-mandatory overflow-x-auto py-2 pl-5 pr-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {INSPIRATION_LIBRARY.map((item) => (
             <InspirationCard key={item.id} item={item} />
           ))}
