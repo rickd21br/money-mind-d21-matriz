@@ -5,6 +5,7 @@ import { MentorCard } from "@/components/MentorCard";
 import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
+import { IceBreakerHero } from "@/components/IceBreakerHero";
 import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
@@ -65,6 +66,11 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* COMECE AQUI — Quebra-Gelo do Mentor do Progresso */}
+      <div className="mt-5">
+        <IceBreakerHero />
+      </div>
 
       {/* ATALHOS — Áudios + Calculadora */}
       <div className="mt-5 grid grid-cols-2 gap-3">
