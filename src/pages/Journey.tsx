@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Day1Experience } from "@/components/Day1Experience";
 import { Day2Experience } from "@/components/Day2Experience";
+import { Day3Experience } from "@/components/Day3Experience";
 
 const Journey = () => {
   const { isCompleted, toggleDay, progress } = useJourney();
@@ -79,8 +80,9 @@ const Journey = () => {
 
       <Day1Experience open={openDay === 1} onOpenChange={(o) => !o && setOpenDay(null)} />
       <Day2Experience open={openDay === 2} onOpenChange={(o) => !o && setOpenDay(null)} />
+      <Day3Experience open={openDay === 3} onOpenChange={(o) => !o && setOpenDay(null)} />
 
-      <Sheet open={openDay !== null && openDay !== 1 && openDay !== 2} onOpenChange={(o) => !o && setOpenDay(null)}>
+      <Sheet open={openDay !== null && ![1, 2, 3].includes(openDay)} onOpenChange={(o) => !o && setOpenDay(null)}>
         <SheetContent side="bottom" className="rounded-t-3xl border-0 pb-8">
           {current && (
             <>
