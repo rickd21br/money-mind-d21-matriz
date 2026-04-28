@@ -6,7 +6,7 @@ import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { IceBreakerHero } from "@/components/IceBreakerHero";
-import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -72,13 +72,15 @@ const Home = () => {
         <IceBreakerHero />
       </div>
 
-      {/* ATALHOS — Bônus + Calculadora */}
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="mt-5"><MentorCard /></div>
+
+      {/* ATALHOS — Bônus + Calculadora + Ebook */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
         <Link
           to="/audios"
-          className="group flex flex-col gap-2 rounded-2xl bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+          className="group flex min-h-[104px] flex-col justify-between gap-3 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-soft">
             <Headphones className="h-5 w-5" />
           </div>
           <div>
@@ -88,9 +90,9 @@ const Home = () => {
         </Link>
         <Link
           to="/calculadora"
-          className="group flex flex-col gap-2 rounded-2xl bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+          className="group flex min-h-[104px] flex-col justify-between gap-3 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-soft">
             <Calculator className="h-5 w-5" />
           </div>
           <div>
@@ -98,9 +100,19 @@ const Home = () => {
             <p className="text-[11px] text-muted-foreground">Juros, FIRE, dívidas</p>
           </div>
         </Link>
+        <Link
+          to="/audios"
+          className="group col-span-2 flex min-h-[94px] items-center gap-4 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+        >
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent shadow-soft">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold leading-tight">Capítulos do Ebook Oficial</p>
+            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Áudios da jornada organizados por capítulo</p>
+          </div>
+        </Link>
       </div>
-
-      <div className="mt-5"><MentorCard /></div>
 
       {/* METAS — controle gamificado */}
       <div className="mt-5"><GoalsCard /></div>
