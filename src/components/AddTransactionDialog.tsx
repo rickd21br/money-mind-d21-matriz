@@ -148,9 +148,11 @@ export function AddTransactionDialog({ trigger, editing, open: controlledOpen, o
     setOpen(false);
   };
 
+  const isControlled = controlledOpen !== undefined;
+
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) reset(); }}>
-      {trigger !== null && (
+      {!isControlled && (
         <DialogTrigger asChild>
           {trigger ?? (
             <Button
