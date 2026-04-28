@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Day1Experience } from "@/components/Day1Experience";
 
 const Journey = () => {
   const { isCompleted, toggleDay, progress } = useJourney();
