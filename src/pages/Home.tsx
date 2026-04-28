@@ -72,7 +72,7 @@ const Home = () => {
         <IceBreakerHero />
       </div>
 
-      {/* ATALHOS — Áudios + Calculadora */}
+      {/* ATALHOS — Bônus + Calculadora */}
       <div className="mt-5 grid grid-cols-2 gap-3">
         <Link
           to="/audios"
@@ -82,8 +82,8 @@ const Home = () => {
             <Headphones className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold leading-tight">Áudios</p>
-            <p className="text-[11px] text-muted-foreground">Capítulos do ebook</p>
+            <p className="text-sm font-bold leading-tight">Bônus Exclusivo</p>
+            <p className="text-[11px] text-muted-foreground">Biblioteca de Inspiração</p>
           </div>
         </Link>
         <Link
