@@ -1,7 +1,7 @@
 import { JourneyDay } from "@/types";
 
 export const JOURNEY_DAYS: JourneyDay[] = [
-  { day: 1, title: "O primeiro passo", mission: "Registrar um gasto", description: "Abra o app e registre pelo menos um gasto de hoje. Este é o início da sua consciência financeira." },
+  { day: 1, title: "Planeje antes que fique insustentável", mission: "Comece seu Orçamento Consciente (Cerbasi)", description: "Capítulo 1 — Gustavo Cerbasi. Faça seu snapshot, registre entradas e saídas, e classifique cada gasto em Essencial, Supérfluo ou Meta. Você não controla o que não enxerga." },
   { day: 2, title: "Olhar atento", mission: "Registrar todos os gastos do dia", description: "Não deixe nada passar. Cada centavo conta na sua jornada." },
   { day: 3, title: "Reflexão inicial", mission: "Revisar gastos dos 2 primeiros dias", description: "Volte ao histórico e identifique padrões iniciais nos seus gastos." },
   { day: 4, title: "Categorias", mission: "Classificar gastos por categoria", description: "Organize suas despesas em categorias para enxergar onde o dinheiro vai." },

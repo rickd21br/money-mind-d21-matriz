@@ -1,18 +1,26 @@
-import { useMemo, useCallback, useEffect } from "react";
+import { useMemo, useCallback } from "react";
 import { useStorage } from "./useStorage";
 import { useTransactions, useJourney } from "./useFinance";
+
+export type ESM = "E" | "S" | "M"; // Essencial, Supérfluo, Meta
 
 export interface Day1Snapshot {
   hasToday: number;
   debt: number;
+  monthlyIncome: number;
   savedAt: string;
 }
 
 export interface Day1State {
   snapshot: Day1Snapshot | null;
   startedAt: string | null;
-  baselineTxIds: string[]; // transactions that already existed when Day 1 started
-  shownCards: string[]; // ids of dynamic cards already shown
+  baselineTxIds: string[];
+  shownCards: string[];
+  // Pilar 2 (Cerbasi): classificação E/S/M por id de transação
+  esm: Record<string, ESM>;
+  // Pilar 3: alinhamento familiar (sim/só/—)
+  familyAlignment: "alone" | "shared" | null;
+  familyGoal: string;
   xp: number;
   completed: boolean;
 }
@@ -22,6 +30,9 @@ const DEFAULT_STATE: Day1State = {
   startedAt: null,
   baselineTxIds: [],
   shownCards: [],
+  esm: {},
+  familyAlignment: null,
+  familyGoal: "",
   xp: 0,
   completed: false,
 };
@@ -31,7 +42,6 @@ export function useDay1() {
   const { transactions } = useTransactions();
   const { toggleDay, isCompleted } = useJourney();
 
-  // Transactions created during Day 1 (after start)
   const day1Txs = useMemo(() => {
     if (!state.startedAt) return [];
     return transactions.filter(
@@ -39,23 +49,22 @@ export function useDay1() {
     );
   }, [transactions, state.startedAt, state.baselineTxIds]);
 
-  const txCount = day1Txs.length;
-  const hasCategorized = useMemo(
-    () => day1Txs.some((t) => !!t.category && !!t.group),
-    [day1Txs]
-  );
+  const incomeTxs = day1Txs.filter((t) => t.type === "income");
+  const expenseTxs = day1Txs.filter((t) => t.type === "expense");
+  const classifiedCount = expenseTxs.filter((t) => state.esm[t.id]).length;
 
-  // Missions
+  // Missões alinhadas aos 3 pilares de Cerbasi (Cap. 1)
   const missions = [
-    { id: "tx1", label: "Criar 1 transação", done: txCount >= 1 },
-    { id: "tx2", label: "Criar mais 1 transação", done: txCount >= 2 },
-    { id: "cat", label: "Categorizar uma transação", done: hasCategorized },
+    { id: "snapshot", label: "Snapshot: quanto entra e quanto você tem (Pilar 1)", done: !!state.snapshot },
+    { id: "income", label: "Registrar 1 entrada do mês (Pilar 1)", done: incomeTxs.length >= 1 },
+    { id: "expenses", label: "Registrar 3 saídas (Pilar 1)", done: expenseTxs.length >= 3 },
+    { id: "esm", label: "Classificar 3 gastos em E / S / M (Pilar 2)", done: classifiedCount >= 3 },
+    { id: "family", label: "Alinhamento familiar + meta (Pilar 3)", done: !!state.familyAlignment && state.familyGoal.trim().length >= 3 },
   ];
   const doneCount = missions.filter((m) => m.done).length;
   const progress = Math.round((doneCount / missions.length) * 100);
   const allDone = doneCount === missions.length;
 
-  // Start Day 1: capture baseline txs
   const start = useCallback(() => {
     setState((prev) => {
       if (prev.startedAt) return prev;
@@ -68,10 +77,10 @@ export function useDay1() {
   }, [setState, transactions]);
 
   const saveSnapshot = useCallback(
-    (hasToday: number, debt: number) => {
+    (hasToday: number, debt: number, monthlyIncome: number) => {
       setState((prev) => ({
         ...prev,
-        snapshot: { hasToday, debt, savedAt: new Date().toISOString() },
+        snapshot: { hasToday, debt, monthlyIncome, savedAt: new Date().toISOString() },
         startedAt: prev.startedAt ?? new Date().toISOString(),
         baselineTxIds: prev.baselineTxIds.length ? prev.baselineTxIds : transactions.map((t) => t.id),
       }));
@@ -79,19 +88,36 @@ export function useDay1() {
     [setState, transactions]
   );
 
-  // Dynamic cards triggered by milestones
+  const classifyTx = useCallback(
+    (txId: string, label: ESM) => {
+      setState((prev) => ({ ...prev, esm: { ...prev.esm, [txId]: label } }));
+    },
+    [setState]
+  );
+
+  const setFamily = useCallback(
+    (alignment: "alone" | "shared", goal: string) => {
+      setState((prev) => ({ ...prev, familyAlignment: alignment, familyGoal: goal }));
+    },
+    [setState]
+  );
+
+  // Cards dinâmicos com tom Cerbasi
   const triggers = useMemo(() => {
     const list: { id: string; text: string }[] = [];
-    if (txCount >= 1)
-      list.push({ id: "after-tx1", text: "Você não precisa ganhar mais primeiro. Precisa controlar melhor." });
-    if (txCount >= 2)
-      list.push({ id: "after-tx2", text: "Controle não vem da teoria. Vem da repetição." });
-    if (hasCategorized)
-      list.push({ id: "after-cat", text: "Agora você não está só gastando. Está entendendo." });
+    if (state.snapshot)
+      list.push({ id: "after-snapshot", text: "“Um orçamento não é uma prisão, é um mapa para suas escolhas.” — Cerbasi" });
+    if (incomeTxs.length >= 1)
+      list.push({ id: "after-income", text: "Saber quanto entra é o ponto de partida da inteligência financeira." });
+    if (expenseTxs.length >= 3)
+      list.push({ id: "after-expenses", text: "Você não pode controlar o que não enxerga. Continue anotando." });
+    if (classifiedCount >= 3)
+      list.push({ id: "after-esm", text: "E / S / M é o filtro: isso me aproxima da vida que quero ou só me distrai dela?" });
+    if (state.familyAlignment)
+      list.push({ id: "after-family", text: "“Família unida no planejamento é mais forte na realização.” — Cerbasi" });
     return list;
-  }, [txCount, hasCategorized]);
+  }, [state.snapshot, state.familyAlignment, incomeTxs.length, expenseTxs.length, classifiedCount]);
 
-  // Pending card (next one not yet shown)
   const pendingCard = triggers.find((t) => !state.shownCards.includes(t.id)) ?? null;
 
   const dismissCard = useCallback(
@@ -120,8 +146,15 @@ export function useDay1() {
     pendingCard,
     xp: state.xp,
     completed: state.completed,
+    expenseTxs,
+    incomeTxs,
+    esm: state.esm,
+    familyAlignment: state.familyAlignment,
+    familyGoal: state.familyGoal,
     start,
     saveSnapshot,
+    classifyTx,
+    setFamily,
     dismissCard,
     finish,
     reset,
