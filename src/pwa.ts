@@ -24,15 +24,18 @@ export function registerPWA() {
     host === "localhost" ||
     host === "127.0.0.1";
 
-  // Em preview/iframe: limpa qualquer SW antigo e sai.
+  // Em preview/iframe: limpa qualquer SW antigo + caches e sai.
   if (isPreviewHost || isInIframe) {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .getRegistrations()
-        .then((regs) => regs.forEach((r) => r.unregister()))
+        .then((regs) => Promise.all(regs.map((r) => r.unregister())))
         .catch(() => {
           /* ignore */
         });
+    }
+    if ("caches" in window) {
+      caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => {});
     }
     return;
   }
