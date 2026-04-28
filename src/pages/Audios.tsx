@@ -274,6 +274,11 @@ const Audios = () => {
   }, [currentTrack]);
 
   const playTrack = (track: PlayerTrack) => {
+    if (!track.available) {
+      toast.info("Esta faixa ainda precisa receber o arquivo correto de áudio.");
+      return;
+    }
+
     const audio = audioRef.current;
     if (currentTrack?.id === track.id && audio) {
       if (audio.paused) {
@@ -318,6 +323,7 @@ const Audios = () => {
       subtitle: chapter.author,
       src: chapter.src,
       collection: "Ebook Oficial",
+      available: Boolean(chapter.src),
     });
   };
 
@@ -328,6 +334,7 @@ const Audios = () => {
       subtitle: item.author,
       src: track.src,
       collection: item.title,
+      available: !track.duration.includes("A liberar") && Boolean(track.src),
     });
   };
 
