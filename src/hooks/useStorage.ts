@@ -40,7 +40,7 @@ export function useStorage<T>(key: string, initialValue: T) {
   // Persiste e notifica outras instâncias na mesma aba.
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(resolveKey(), JSON.stringify(value));
     } catch {
       /* ignore */
     }
@@ -48,11 +48,12 @@ export function useStorage<T>(key: string, initialValue: T) {
 
   // Ouve atualizações de outras instâncias (mesma aba) e do evento storage (entre abas).
   useEffect(() => {
+    const sk = resolveKey();
     const onLocal: Listener = (v) => setValueState(v as T);
-    const unsubscribe = subscribe(key, onLocal);
+    const unsubscribe = subscribe(sk, onLocal);
 
     const onStorage = (e: StorageEvent) => {
-      if (e.key !== key || e.newValue == null) return;
+      if (e.key !== sk || e.newValue == null) return;
       try {
         setValueState(JSON.parse(e.newValue) as T);
       } catch {
@@ -61,9 +62,21 @@ export function useStorage<T>(key: string, initialValue: T) {
     };
     window.addEventListener("storage", onStorage);
 
+    // Quando o usuário ativo muda, recarrega o valor sob o novo namespace.
+    const onSessionChange = () => {
+      try {
+        const raw = localStorage.getItem(resolveKey());
+        setValueState(raw ? (JSON.parse(raw) as T) : initialRef.current);
+      } catch {
+        setValueState(initialRef.current);
+      }
+    };
+    window.addEventListener("d21:session-change", onSessionChange);
+
     return () => {
       unsubscribe();
       window.removeEventListener("storage", onStorage);
+      window.removeEventListener("d21:session-change", onSessionChange);
     };
   }, [key]);
 
@@ -73,7 +86,7 @@ export function useStorage<T>(key: string, initialValue: T) {
         const resolved =
           typeof next === "function" ? (next as (p: T) => T)(prev) : next;
         // Notifica as outras instâncias com o valor resolvido.
-        emit(key, resolved);
+        emit(resolveKey(), resolved);
         return resolved;
       });
     },
