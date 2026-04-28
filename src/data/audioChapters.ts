@@ -4,17 +4,18 @@ export interface AudioChapter {
   title: string;
   author: string;
   duration: string; // mm:ss aprox.
-  /** URL pública do áudio. */
+  /** URL pública do áudio (vazio enquanto não publicado). */
   src: string;
   insights: string[];
   challenges: string[];
   triggers: string;
 }
 
-/** Base pública dos áudios "Quebra-Gelo" da Jornada do Progresso. */
-const BASE = "https://jornadadoprogresso.com/wp-content/uploads/2026/04";
-const audio = (n: number) => `${BASE}/int-aud${n}.wav`;
-
+/**
+ * Capítulos do Ebook "Desafio Jornada do Progresso".
+ * Os áudios `int-audN.wav` são exclusivos do bloco "Quebra-Gelo"
+ * (ver `iceBreakerAudios.ts`) e NÃO devem ser reutilizados aqui.
+ */
 export const AUDIO_CHAPTERS: AudioChapter[] = [
   {
     id: "cap-1",
@@ -22,7 +23,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Boas-vindas à Jornada",
     author: "Franciel Sousa",
     duration: "06:00",
-    src: audio(1),
+    src: "",
     insights: [
       "Toda transformação começa com uma decisão consciente.",
       "Você não está sozinho: a jornada é feita junto aos mestres.",
@@ -39,7 +40,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Casais Inteligentes & Orçamento Familiar",
     author: "Gustavo Cerbasi",
     duration: "08:00",
-    src: audio(2),
+    src: "",
     insights: [
       "Sem clareza não há controle: medir é o primeiro passo.",
       "Orçamento em casal alinha sonhos e elimina conflitos.",
@@ -56,15 +57,12 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Gastar Menos, Ganhar Mais, Investir Melhor",
     author: "Tiago Nigro (Primo Rico)",
     duration: "09:00",
-    src: audio(3),
+    src: "",
     insights: [
       "Renda ativa te sustenta. Renda passiva te liberta.",
       "Investir 20–30% da renda muda sua trajetória em 5 anos.",
     ],
-    challenges: [
-      "Mapeie suas fontes de renda atuais.",
-      "Defina seu % de aporte mensal.",
-    ],
+    challenges: ["Mapeie suas fontes de renda atuais.", "Defina seu % de aporte mensal."],
     triggers: "Faça o dinheiro trabalhar por você — não o contrário.",
   },
   {
@@ -73,7 +71,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Bola de Neve das Dívidas",
     author: "Dave Ramsey",
     duration: "07:30",
-    src: audio(4),
+    src: "",
     insights: [
       "Pequenas vitórias geram grande tração emocional.",
       "Quitar a menor dívida primeiro destrava a próxima.",
@@ -90,7 +88,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Pai Rico, Pai Pobre — Ativos vs Passivos",
     author: "Robert Kiyosaki",
     duration: "10:00",
-    src: audio(5),
+    src: "",
     insights: [
       "Ativo coloca dinheiro no bolso. Passivo tira.",
       "Os ricos compram ativos; os pobres acumulam passivos disfarçados.",
@@ -105,9 +103,9 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     id: "cap-6",
     number: 6,
     title: "Pague-se Primeiro & Hábitos de Riqueza",
-    author: "George S. Clason (O Homem Mais Rico da Babilônia)",
+    author: "George S. Clason",
     duration: "08:30",
-    src: audio(6),
+    src: "",
     insights: [
       "Guarde no mínimo 10% de tudo que você ganha — antes de qualquer gasto.",
       "Hábitos consistentes superam grandes ganhos esporádicos.",
@@ -124,7 +122,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Hábitos Atômicos da Prosperidade",
     author: "James Clear",
     duration: "08:00",
-    src: audio(7),
+    src: "",
     insights: [
       "1% melhor por dia = 37x melhor em um ano.",
       "Você não sobe ao nível das suas metas; cai ao nível dos seus sistemas.",
@@ -141,7 +139,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Os Segredos da Mente Milionária",
     author: "T. Harv Eker",
     duration: "09:00",
-    src: audio(8),
+    src: "",
     insights: [
       "Sua conta bancária reflete o seu modelo mental de dinheiro.",
       "Pensamento gera sentimento, sentimento gera ação, ação gera resultado.",
@@ -158,7 +156,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Investindo com Sabedoria — O Jogo Longo",
     author: "Warren Buffett",
     duration: "09:30",
-    src: audio(9),
+    src: "",
     insights: [
       "Tempo no mercado vence tentar acertar o mercado.",
       "Compre empresas que você entenderia segurar por 10 anos.",
@@ -168,22 +166,5 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
       "Defina seu primeiro aporte recorrente.",
     ],
     triggers: "O melhor momento para plantar foi há 20 anos. O segundo melhor é hoje.",
-  },
-  {
-    id: "cap-10",
-    number: 10,
-    title: "Mentalidade Vencedora & Plano de 12 Meses",
-    author: "Franciel Sousa",
-    duration: "10:00",
-    src: audio(10),
-    insights: [
-      "4 pilares: Disciplina, Educação Contínua, Visão de Longo Prazo, Resiliência.",
-      "Plano + execução semanal > motivação esporádica.",
-    ],
-    challenges: [
-      "Esboce seu plano financeiro dos próximos 12 meses.",
-      "Defina sua revisão semanal (dia + horário fixo).",
-    ],
-    triggers: "Manter é mais difícil que conquistar — e é aí que você se torna mestre.",
   },
 ];
