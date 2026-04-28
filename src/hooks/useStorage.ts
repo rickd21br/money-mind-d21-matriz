@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { scopedKey } from "./useSession";
 
 // Event-bus para sincronizar todas as instâncias de useStorage com a mesma key
 // (mesma aba) — o evento `storage` nativo só dispara entre abas diferentes.
