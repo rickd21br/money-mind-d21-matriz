@@ -23,6 +23,7 @@ type PlayerTrack = {
   subtitle: string;
   src: string;
   collection: string;
+  available: boolean;
 };
 
 function ChapterCard({
