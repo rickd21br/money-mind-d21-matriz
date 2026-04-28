@@ -49,7 +49,7 @@ export function InfoHint({
       <PopoverContent
         side="top"
         align="center"
-        className="w-72 rounded-2xl border-primary/20 p-4 shadow-floating"
+        className="w-64 rounded-2xl border border-primary/20 bg-popover/80 p-3.5 shadow-floating backdrop-blur-md supports-[backdrop-filter]:bg-popover/70"
       >
         <div className="flex items-start gap-2">
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
