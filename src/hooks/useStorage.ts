@@ -26,10 +26,11 @@ function subscribe(key: string, cb: Listener) {
 
 export function useStorage<T>(key: string, initialValue: T) {
   const initialRef = useRef(initialValue);
+  const resolveKey = () => scopedKey(key);
   const [value, setValueState] = useState<T>(() => {
     if (typeof window === "undefined") return initialRef.current;
     try {
-      const raw = localStorage.getItem(key);
+      const raw = localStorage.getItem(resolveKey());
       return raw ? (JSON.parse(raw) as T) : initialRef.current;
     } catch {
       return initialRef.current;
