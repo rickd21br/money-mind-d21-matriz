@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 import { useDay1, type ESM } from "@/hooks/useDay1";
 import { AddTransactionDialog } from "./AddTransactionDialog";
 import { toast } from "sonner";
+import { CurrencyInput } from "./CurrencyInput";
+import { parseMaskedToNumber } from "@/hooks/useCurrency";
+import { formatCurrency } from "@/hooks/useFinance";
 
 interface Props {
   open: boolean;
@@ -64,9 +67,9 @@ export function Day1Experience({ open, onOpenChange }: Props) {
 
   const handleSnapshot = (e: React.FormEvent) => {
     e.preventDefault();
-    const a = parseFloat(hasToday.replace(",", ".")) || 0;
-    const b = parseFloat(debt.replace(",", ".")) || 0;
-    const c = parseFloat(income.replace(",", ".")) || 0;
+    const a = parseMaskedToNumber(hasToday);
+    const b = parseMaskedToNumber(debt);
+    const c = parseMaskedToNumber(income);
     if (a <= 0 && c <= 0) {
       toast.error("Informe quanto você tem hoje ou quanto entra por mês");
       return;
@@ -122,20 +125,17 @@ export function Day1Experience({ open, onOpenChange }: Props) {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="has">Tem hoje (R$)</Label>
-                    <Input id="has" inputMode="decimal" placeholder="0,00" value={hasToday}
-                      onChange={(e) => setHasToday(e.target.value)} className="h-11 rounded-xl" />
+                    <Label htmlFor="has">Tem hoje</Label>
+                    <CurrencyInput id="has" value={hasToday} onChange={setHasToday} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="debt">Deve (R$)</Label>
-                    <Input id="debt" inputMode="decimal" placeholder="0,00" value={debt}
-                      onChange={(e) => setDebt(e.target.value)} className="h-11 rounded-xl" />
+                    <Label htmlFor="debt">Deve</Label>
+                    <CurrencyInput id="debt" value={debt} onChange={setDebt} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="income">Quanto entra por mês? (R$)</Label>
-                  <Input id="income" inputMode="decimal" placeholder="0,00" value={income}
-                    onChange={(e) => setIncome(e.target.value)} className="h-11 rounded-xl" />
+                  <Label htmlFor="income">Quanto entra por mês?</Label>
+                  <CurrencyInput id="income" value={income} onChange={setIncome} />
                 </div>
                 <Button type="submit" className="h-11 w-full rounded-xl gradient-primary font-semibold">
                   Salvar snapshot
@@ -153,15 +153,15 @@ export function Day1Experience({ open, onOpenChange }: Props) {
                 <div className="mt-2 grid grid-cols-3 gap-2 text-sm">
                   <div>
                     <p className="text-[11px] text-muted-foreground">Tem</p>
-                    <p className="font-bold">R$ {snapshot.hasToday.toFixed(2)}</p>
+                    <p className="font-bold">{formatCurrency(snapshot.hasToday)}</p>
                   </div>
                   <div>
                     <p className="text-[11px] text-muted-foreground">Deve</p>
-                    <p className="font-bold">R$ {snapshot.debt.toFixed(2)}</p>
+                    <p className="font-bold">{formatCurrency(snapshot.debt)}</p>
                   </div>
                   <div>
                     <p className="text-[11px] text-muted-foreground">Entra/mês</p>
-                    <p className="font-bold">R$ {snapshot.monthlyIncome.toFixed(2)}</p>
+                    <p className="font-bold">{formatCurrency(snapshot.monthlyIncome)}</p>
                   </div>
                 </div>
               </div>
