@@ -1,11 +1,19 @@
 import { useRef, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { AUDIO_CHAPTERS, AudioChapter } from "@/data/audioChapters";
+import { INSPIRATION_LIBRARY, InspirationAudio } from "@/data/inspirationLibrary";
 import { useAudioProgress } from "@/hooks/useAudioProgress";
-import { Headphones, Lightbulb, Target, Sparkles, Check, Lock } from "lucide-react";
+import { Headphones, Lightbulb, Target, Sparkles, Check, Lock, BookOpen, Brain, Gem, HeartHandshake, Leaf } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const inspirationIcons = {
+  mind: Brain,
+  wealth: Gem,
+  habit: Leaf,
+  couple: HeartHandshake,
+};
 
 function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -121,6 +129,48 @@ function ChapterCard({ chapter, locked }: { chapter: AudioChapter; locked: boole
   );
 }
 
+function InspirationCard({ item }: { item: InspirationAudio }) {
+  const Icon = inspirationIcons[item.icon];
+
+  return (
+    <article className="rounded-3xl bg-card p-4 shadow-soft transition-smooth">
+      <header className="flex items-start gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+          <Icon className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+              {item.format}
+            </span>
+            <span className="text-[10px] font-semibold text-muted-foreground">{item.duration}</span>
+          </div>
+          <h3 className="text-sm font-bold leading-tight">{item.title}</h3>
+          <p className="text-xs text-muted-foreground">{item.author}</p>
+        </div>
+      </header>
+
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
+
+      <div className="mt-3">
+        {item.src ? (
+          <audio
+            src={item.src}
+            controls
+            controlsList="nodownload noplaybackrate"
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-full"
+          />
+        ) : (
+          <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3 text-center text-[11px] text-muted-foreground">
+            Player reservado para o áudio do acervo.
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
 const Audios = () => {
   const { state } = useAudioProgress();
 
@@ -141,6 +191,25 @@ const Audios = () => {
           {state.completed.length}/{AUDIO_CHAPTERS.length}
         </p>
         <p className="mt-1 text-[11px] opacity-90">+{state.xp} XP acumulados</p>
+      </section>
+
+      <section className="mb-6">
+        <div className="mb-3 rounded-3xl bg-card p-5 shadow-soft">
+          <div className="flex items-center gap-2 text-primary">
+            <BookOpen className="h-5 w-5" />
+            <p className="text-xs font-bold uppercase tracking-wider">Bônus Exclusivo</p>
+          </div>
+          <h2 className="mt-2 text-xl font-bold tracking-tight">Biblioteca de Inspiração</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Uma trilha de referências para ampliar seu conhecimento e entrar com conforto no universo literário da prosperidade. A equipe reuniu best sellers em áudio para você ouvir onde e quando puder, absorvendo ideias dos autores mais conceituados do segmento.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {INSPIRATION_LIBRARY.map((item) => (
+            <InspirationCard key={item.id} item={item} />
+          ))}
+        </div>
       </section>
 
       <div className="space-y-3">
