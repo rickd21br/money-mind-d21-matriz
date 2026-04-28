@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
 import { MobileShell } from "@/components/MobileShell";
 import { MentorCard } from "@/components/MentorCard";
@@ -6,7 +6,7 @@ import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { IceBreakerHero } from "@/components/IceBreakerHero";
-import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -14,11 +14,59 @@ import { Transaction } from "@/types";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+const HOME_ACTIONS = [
+  {
+    title: "Bônus Exclusivo",
+    kicker: "Biblioteca de Inspiração",
+    description: "Acesse bestsellers selecionados com faixas organizadas por obra para escutar, refletir e destravar novas decisões financeiras.",
+    to: "/audios",
+    icon: Headphones,
+    cta: "Abrir acervo",
+  },
+  {
+    title: "Calculadora",
+    kicker: "Clareza para decidir",
+    description: "Simule juros, dívidas, metas e cenários de crescimento antes de agir. Menos achismo, mais controle.",
+    to: "/calculadora",
+    icon: Calculator,
+    cta: "Calcular agora",
+  },
+  {
+    title: "Trilha de aprendizado",
+    kicker: "Ebook oficial em áudio",
+    description: "Siga os capítulos da Jornada do Progresso em sequência, com insights e desafios práticos para manter evolução diária.",
+    to: "/audios",
+    icon: BookOpen,
+    cta: "Ouvir trilha",
+  },
+];
+
 const Home = () => {
   const { transactions, totals, removeTransaction } = useTransactions();
   const recent = transactions.slice(0, 6);
   const balancePositive = totals.balance >= 0;
   const [editing, setEditing] = useState<Transaction | null>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [activeAction, setActiveAction] = useState(0);
+
+  const scrollAction = (direction: "left" | "right") => {
+    const next = direction === "left" ? Math.max(activeAction - 1, 0) : Math.min(activeAction + 1, HOME_ACTIONS.length - 1);
+    setActiveAction(next);
+    actionsRef.current?.querySelectorAll<HTMLElement>("[data-home-action]")[next]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  };
+
+  const handleActionScroll = () => {
+    const el = actionsRef.current;
+    if (!el) return;
+    const center = el.scrollLeft + el.clientWidth / 2;
+    const cards = Array.from(el.querySelectorAll<HTMLElement>("[data-home-action]"));
+    const closest = cards.reduce((best, card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(center - cardCenter);
+      return distance < best.distance ? { index, distance } : best;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY });
+    setActiveAction(closest.index);
+  };
 
   const classBadge = (c?: Transaction["classification"]) => {
     if (!c) return null;
