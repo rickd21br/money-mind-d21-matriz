@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { Transaction, User, TransactionType, CATEGORY_CATALOG } from "@/types";
+import { Transaction, User, TransactionType, CATEGORY_CATALOG, Goal } from "@/types";
 import { useStorage } from "./useStorage";
 
 type CustomCats = Record<TransactionType, Record<string, string[]>>;
