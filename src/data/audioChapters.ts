@@ -11,6 +11,9 @@ export interface AudioChapter {
   triggers: string;
 }
 
+/** Áudio de teste (CC0). Substitua pela URL do seu domínio quando publicar. */
+const SAMPLE = "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3";
+
 export const AUDIO_CHAPTERS: AudioChapter[] = [
   {
     id: "cap-1",
@@ -18,7 +21,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Diagnóstico Financeiro",
     author: "Gustavo Cerbasi",
     duration: "08:00",
-    src: "",
+    src: SAMPLE,
     insights: [
       "Sem clareza não há controle: medir é o primeiro passo.",
       "Cada gasto revela uma prioridade — escutada ou ignorada.",
@@ -35,7 +38,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Bola de Neve das Dívidas",
     author: "Dave Ramsey",
     duration: "07:30",
-    src: "",
+    src: SAMPLE,
     insights: [
       "Pequenas vitórias geram grande tração emocional.",
       "Quitar a menor dívida primeiro destrava a próxima.",
@@ -52,7 +55,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Mentalidade de Investidor",
     author: "Tiago Nigro (Primo Rico)",
     duration: "09:15",
-    src: "",
+    src: SAMPLE,
     insights: [
       "Renda ativa te sustenta. Renda passiva te liberta.",
       "Investir 20–30% da renda muda sua trajetória em 5 anos.",
@@ -69,7 +72,7 @@ export const AUDIO_CHAPTERS: AudioChapter[] = [
     title: "Pai Rico, Pai Pobre",
     author: "Robert Kiyosaki",
     duration: "10:00",
-    src: "",
+    src: SAMPLE,
     insights: [
       "Ativo coloca dinheiro no bolso. Passivo tira.",
       "Os ricos compram ativos. Os pobres acumulam passivos disfarçados de ativos.",
