@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Journey from "./pages/Journey";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
+import Audios from "./pages/Audios";
+import Calculator from "./pages/Calculator";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound.tsx";
 import { useStorage } from "./hooks/useStorage";
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/jornada" element={<RequireOnboarding><Journey /></RequireOnboarding>} />
           <Route path="/relatorios" element={<RequireOnboarding><Reports /></RequireOnboarding>} />
           <Route path="/perfil" element={<RequireOnboarding><Profile /></RequireOnboarding>} />
+          <Route path="/audios" element={<RequireOnboarding><Audios /></RequireOnboarding>} />
+          <Route path="/calculadora" element={<RequireOnboarding><Calculator /></RequireOnboarding>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
