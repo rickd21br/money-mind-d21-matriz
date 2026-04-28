@@ -120,8 +120,6 @@ const Home = () => {
         <IceBreakerHero />
       </div>
 
-      <div className="mt-5"><MentorCard /></div>
-
       {/* INÍCIO — 3 cards abaixo do Mentor */}
       <section className="mt-5 overflow-visible">
         <div className="mb-3 flex items-center justify-between gap-3">
@@ -153,10 +151,10 @@ const Home = () => {
                 to={action.to}
                 data-home-action
                 className={cn(
-                  "group relative flex min-h-[250px] min-w-[72%] snap-center flex-col justify-between overflow-hidden rounded-[1.15rem] border bg-card p-5 shadow-soft transition-all duration-300 first:ml-0 -ml-9 active:scale-[0.98]",
+                  "group relative flex min-h-[248px] min-w-[60%] snap-center flex-col justify-between overflow-hidden rounded-[1.15rem] border bg-card p-4 shadow-soft transition-all duration-300 first:ml-0 -ml-16 active:scale-[0.98]",
                   active
-                    ? "z-30 translate-y-0 scale-100 border-primary shadow-floating opacity-100"
-                    : "z-10 translate-y-4 scale-[0.92] border-border/70 opacity-70"
+                    ? "z-40 translate-y-0 scale-100 border-primary shadow-floating opacity-100"
+                    : "z-0 translate-y-4 scale-[0.9] border-border/70 opacity-60"
                 )}
               >
                 <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
@@ -169,7 +167,7 @@ const Home = () => {
 
                 <span className="relative block space-y-3">
                   <span className="block text-[11px] font-semibold text-muted-foreground">{action.kicker}</span>
-                  <span className="block text-xl font-bold leading-[1.05] tracking-tight">{action.title}</span>
+                  <span className="block text-lg font-bold leading-[1.05] tracking-tight">{action.title}</span>
                   <span className="block text-xs leading-relaxed text-muted-foreground">{action.description}</span>
                 </span>
 
@@ -186,6 +184,8 @@ const Home = () => {
           })}
         </div>
       </section>
+
+      <div className="mt-5"><MentorCard /></div>
 
       {/* METAS — controle gamificado */}
       <div className="mt-5"><GoalsCard /></div>
