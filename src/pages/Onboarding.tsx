@@ -10,10 +10,12 @@ import {
   Wallet,
   BarChart3,
   Sparkles,
+  Globe,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { useStorage } from "@/hooks/useStorage";
 import { setActiveEmail } from "@/hooks/useSession";
+import { CURRENCIES, getCurrencyOption } from "@/hooks/useCurrency";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -33,6 +35,7 @@ const Onboarding = () => {
   const [, setFirstName] = useStorage<string>("d21.firstName", "");
   const [name, setName] = useState(user.name === "Visitante" ? "" : user.name);
   const [email, setEmail] = useState(user.email || "");
+  const [currency, setCurrency] = useState<string>("BRL");
   const [installPrompt, setInstallPrompt] = useState<BIPEvent | null>(null);
   const [installOpen, setInstallOpen] = useState(false);
 
@@ -88,6 +91,7 @@ const Onboarding = () => {
       );
       localStorage.setItem(`${ns}d21.firstName`, JSON.stringify(first));
       localStorage.setItem(`${ns}d21.onboarded`, JSON.stringify(true));
+      localStorage.setItem(`${ns}d21.currency`, JSON.stringify(currency));
       // chaves globais legadas
       localStorage.setItem("nome_completo", trimmedName);
       localStorage.setItem("email_usuario", trimmedEmail);
@@ -228,6 +232,30 @@ const Onboarding = () => {
                 className="h-12 w-full rounded-xl border border-white/20 bg-white/95 pl-10 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="currency" className="text-xs font-medium text-white/85">
+              Moeda principal
+            </label>
+            <div className="relative">
+              <Globe className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <select
+                id="currency"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="h-12 w-full appearance-none rounded-xl border border-white/20 bg-white/95 pl-10 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.code} — {c.label} ({c.symbol})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="text-[10px] text-white/60">
+              Você pode mudar depois no Perfil. Atual: {getCurrencyOption(currency).symbol}
+            </p>
           </div>
 
           <Button

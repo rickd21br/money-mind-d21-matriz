@@ -146,5 +146,19 @@ export function useUser() {
   return { user, setUser };
 }
 
-export const formatCurrency = (value: number) =>
-  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+import { getCurrencyOption } from "./useCurrency";
+import { scopedKey } from "./useSession";
+
+/**
+ * Formata um valor usando a moeda do usuário ativo.
+ * Lê direto do localStorage para refletir a escolha global em tempo real.
+ */
+export const formatCurrency = (value: number) => {
+  let code = "BRL";
+  try {
+    const raw = localStorage.getItem(scopedKey("d21.currency"));
+    if (raw) code = JSON.parse(raw) as string;
+  } catch { /* ignore */ }
+  const opt = getCurrencyOption(code);
+  return value.toLocaleString(opt.locale, { style: "currency", currency: opt.code });
+};

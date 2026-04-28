@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { InfoHint } from "./InfoHint";
 import { getGroupInfo, getCategoryInfo } from "@/data/categoryInfo";
 import { ClassificationPicker } from "./ClassificationPicker";
+import { CurrencyInput } from "./CurrencyInput";
+import { parseMaskedToNumber, formatNumberInput, useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   trigger?: React.ReactNode;
@@ -25,6 +27,7 @@ interface Props {
 export function AddTransactionDialog({ trigger, editing, open: controlledOpen, onOpenChange }: Props) {
   const { addTransaction, updateTransaction } = useTransactions();
   const { getGroups, getCategories, addCategory, isCustomCategory, removeCategory, renameCategory } = useCategories();
+  const { code: currencyCode } = useCurrency();
 
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
@@ -55,11 +58,11 @@ export function AddTransactionDialog({ trigger, editing, open: controlledOpen, o
       setGroup(editing.group ?? "");
       setCategory(editing.category);
       setClassification(editing.classification);
-      setAmount(String(editing.amount).replace(".", ","));
+      setAmount(formatNumberInput(editing.amount, currencyCode));
       setDescription(editing.description);
       setDate(editing.date);
     }
-  }, [editing, open]);
+  }, [editing, open, currencyCode]);
 
   const groups = useMemo(() => getGroups(type), [getGroups, type]);
   const categories = useMemo(
@@ -130,7 +133,7 @@ export function AddTransactionDialog({ trigger, editing, open: controlledOpen, o
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const value = parseFloat(amount.replace(",", "."));
+    const value = parseMaskedToNumber(amount);
     if (!value || value <= 0) { toast.error("Informe um valor válido"); return; }
     if (!group) { toast.error("Escolha um grupo"); return; }
     if (!category) { toast.error("Escolha uma categoria"); return; }
@@ -199,14 +202,11 @@ export function AddTransactionDialog({ trigger, editing, open: controlledOpen, o
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="amount">Valor (R$)</Label>
-            <Input
+            <Label htmlFor="amount">Valor</Label>
+            <CurrencyInput
               id="amount"
-              inputMode="decimal"
-              placeholder="0,00"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="h-12 rounded-xl text-lg"
+              onChange={setAmount}
             />
           </div>
 

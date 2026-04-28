@@ -3,10 +3,11 @@ import { useUser, useJourney, useTransactions } from "@/hooks/useFinance";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut, User as UserIcon, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { endSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router-dom";
+import { CurrencySelect } from "@/components/CurrencySelect";
 
 const Profile = () => {
   const { user, setUser } = useUser();
@@ -65,6 +66,16 @@ const Profile = () => {
             placeholder="seu@email.com"
             className="h-12 rounded-xl"
           />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="flex items-center gap-1.5">
+            <Globe className="h-3.5 w-3.5 text-primary" /> Moeda
+          </Label>
+          <CurrencySelect />
+          <p className="text-[10px] text-muted-foreground">
+            Aplica-se a todos os valores, gráficos e relatórios do app.
+          </p>
         </div>
       </section>
 

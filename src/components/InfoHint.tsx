@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -43,7 +43,7 @@ export function InfoHint({
             className
           )}
         >
-          <HelpCircle className={sizeCls} strokeWidth={2.2} />
+          <Lightbulb className={sizeCls} strokeWidth={2.2} />
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -53,7 +53,7 @@ export function InfoHint({
       >
         <div className="flex items-start gap-2">
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <HelpCircle className="h-4 w-4" />
+            <Lightbulb className="h-4 w-4" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold leading-tight text-foreground">
