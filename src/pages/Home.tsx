@@ -148,9 +148,8 @@ const Home = () => {
         )}
       </section>
 
-      {/* Dialog de edição (controlado) */}
+      {/* Dialog de edição (controlado, sem trigger) */}
       <AddTransactionDialog
-        trigger={null as never}
         editing={editing}
         open={!!editing}
         onOpenChange={(o) => !o && setEditing(null)}
