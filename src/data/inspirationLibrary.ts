@@ -20,7 +20,7 @@ export interface InspirationTrack {
 }
 
 const MEDIA_BASE = "https://jornadadoprogresso.com/wp-content/uploads/2026/04";
-const media = (n: number) => `${MEDIA_BASE}/int-aud${n}.wav`;
+const media = (file: string) => `${MEDIA_BASE}/${file}`;
 
 export const INSPIRATION_LIBRARY: InspirationAudio[] = [
   {
@@ -31,12 +31,12 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Um convite direto para rever a forma como você trabalha, gasta e constrói patrimônio.",
     duration: "Coleção",
     format: "MP3/WAV",
-    src: media(1),
+    src: "",
     folderLabel: "Pasta com 3 faixas",
     tracks: [
-      { id: "prpp-1", title: "Faixa 01 · Mentalidade de ativos", duration: "00:45", src: media(1) },
-      { id: "prpp-2", title: "Faixa 02 · Fluxo de caixa pessoal", duration: "00:40", src: media(2) },
-      { id: "prpp-3", title: "Faixa 03 · Decisões de patrimônio", duration: "00:50", src: media(3) },
+      { id: "prpp-1", title: "Faixa 01 · Mentalidade de ativos", duration: "A liberar", src: media("pai-rico-pai-pobre-01.mp3") },
+      { id: "prpp-2", title: "Faixa 02 · Fluxo de caixa pessoal", duration: "A liberar", src: media("pai-rico-pai-pobre-02.mp3") },
+      { id: "prpp-3", title: "Faixa 03 · Decisões de patrimônio", duration: "A liberar", src: media("pai-rico-pai-pobre-03.mp3") },
     ],
     icon: "wealth",
   },
@@ -48,11 +48,11 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Lições atemporais para transformar disciplina em segurança e clareza financeira.",
     duration: "Audiobook",
     format: "MP3/WAV",
-    src: media(4),
+    src: "",
     folderLabel: "Audiobook em 2 faixas",
     tracks: [
-      { id: "babilonia-1", title: "Faixa 01 · Guarde uma parte", duration: "00:35", src: media(4) },
-      { id: "babilonia-2", title: "Faixa 02 · Multiplique com disciplina", duration: "00:30", src: media(5) },
+      { id: "babilonia-1", title: "Faixa 01 · Guarde uma parte", duration: "A liberar", src: media("homem-mais-rico-babilonia-01.mp3") },
+      { id: "babilonia-2", title: "Faixa 02 · Multiplique com disciplina", duration: "A liberar", src: media("homem-mais-rico-babilonia-02.mp3") },
     ],
     icon: "wealth",
   },
@@ -64,10 +64,10 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Perfeito para identificar padrões invisíveis que limitam escolhas e resultados.",
     duration: "Audiobook",
     format: "MP3/WAV",
-    src: media(6),
+    src: "",
     folderLabel: "Audiobook",
     tracks: [
-      { id: "mente-milionaria-1", title: "Faixa única · Arquivos de riqueza", duration: "00:50", src: media(6) },
+      { id: "mente-milionaria-1", title: "Faixa única · Arquivos de riqueza", duration: "A liberar", src: media("segredos-mente-milionaria.mp3") },
     ],
     icon: "mind",
   },
@@ -79,11 +79,11 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Ideal para quem quer sair da motivação passageira e criar progresso real.",
     duration: "Audiobook",
     format: "MP3/WAV",
-    src: media(7),
+    src: "",
     folderLabel: "Audiobook em 2 faixas",
     tracks: [
-      { id: "habitos-1", title: "Faixa 01 · Sistemas antes de metas", duration: "00:40", src: media(7) },
-      { id: "habitos-2", title: "Faixa 02 · Pequenas melhorias diárias", duration: "00:55", src: media(8) },
+      { id: "habitos-1", title: "Faixa 01 · Sistemas antes de metas", duration: "A liberar", src: media("habitos-atomicos-01.mp3") },
+      { id: "habitos-2", title: "Faixa 02 · Pequenas melhorias diárias", duration: "A liberar", src: media("habitos-atomicos-02.mp3") },
     ],
     icon: "habit",
   },
@@ -95,10 +95,10 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Uma escuta essencial para entender por que razão nem sempre vence a matemática.",
     duration: "Audiobook",
     format: "MP3/WAV",
-    src: media(9),
+    src: "",
     folderLabel: "Audiobook",
     tracks: [
-      { id: "psicologia-1", title: "Faixa única · Comportamento e dinheiro", duration: "00:40", src: media(9) },
+      { id: "psicologia-1", title: "Faixa única · Comportamento e dinheiro", duration: "A liberar", src: media("psicologia-financeira.mp3") },
     ],
     icon: "mind",
   },
@@ -110,10 +110,10 @@ export const INSPIRATION_LIBRARY: InspirationAudio[] = [
     hook: "Para alinhar sonhos, conversas difíceis e decisões práticas dentro da relação.",
     duration: "Audiobook",
     format: "MP3/WAV",
-    src: media(10),
+    src: "",
     folderLabel: "Audiobook",
     tracks: [
-      { id: "casais-1", title: "Faixa única · Planos e conversas", duration: "00:55", src: media(10) },
+      { id: "casais-1", title: "Faixa única · Planos e conversas", duration: "A liberar", src: media("casais-inteligentes-enriquecem-juntos.mp3") },
     ],
     icon: "couple",
   },

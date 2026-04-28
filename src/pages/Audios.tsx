@@ -15,7 +15,7 @@ const inspirationIcons = {
   couple: HeartHandshake,
 };
 
-const inspirationPalette = ["bg-primary", "bg-accent", "bg-secondary", "bg-muted"];
+const inspirationPalette = ["gradient-primary", "gradient-accent", "bg-secondary text-secondary-foreground", "bg-primary/15 text-primary"];
 
 type PlayerTrack = {
   id: string;
@@ -23,6 +23,7 @@ type PlayerTrack = {
   subtitle: string;
   src: string;
   collection: string;
+  available: boolean;
 };
 
 function ChapterCard({
@@ -136,17 +137,17 @@ function InspirationCard({
     <article
       data-inspiration-card
       className={cn(
-        "relative flex min-h-[386px] min-w-[78%] snap-center flex-col justify-between overflow-hidden rounded-[1.2rem] border bg-card p-4 shadow-soft transition-all duration-300 first:ml-0 -ml-12",
+        "relative flex min-h-[408px] min-w-[72%] snap-center flex-col justify-between overflow-hidden rounded-[1.15rem] border bg-card p-4 shadow-soft transition-all duration-300 first:ml-0 -ml-8",
         active
-          ? "z-40 translate-y-0 rotate-0 scale-100 border-primary shadow-floating opacity-100"
-          : "z-10 translate-y-5 rotate-[-2deg] scale-[0.9] border-border/70 opacity-75"
+          ? "z-50 translate-y-0 rotate-0 scale-100 border-primary shadow-floating opacity-100"
+          : "z-0 translate-y-5 rotate-[-2deg] scale-[0.88] border-border/70 opacity-60"
       )}
     >
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
 
       <header className="relative space-y-4">
         <div className="flex items-center justify-between gap-3">
-          <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-primary-foreground shadow-soft", inspirationPalette[index % inspirationPalette.length])}>
+          <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-soft", inspirationPalette[index % inspirationPalette.length])}>
             <Icon className="h-5 w-5" />
           </div>
           <div className="rounded-full bg-secondary/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">
@@ -156,7 +157,7 @@ function InspirationCard({
 
         <div>
           <p className="text-[11px] font-semibold text-muted-foreground">{item.folderLabel}</p>
-          <h3 className="mt-2 text-xl font-bold leading-[1.08]">{item.title}</h3>
+          <h3 className="mt-2 text-lg font-bold leading-[1.08] tracking-tight">{item.title}</h3>
           <p className="mt-1 text-sm font-semibold text-primary">{item.author}</p>
         </div>
       </header>
@@ -273,6 +274,11 @@ const Audios = () => {
   }, [currentTrack]);
 
   const playTrack = (track: PlayerTrack) => {
+    if (!track.available) {
+      toast.info("Esta faixa ainda precisa receber o arquivo correto de áudio.");
+      return;
+    }
+
     const audio = audioRef.current;
     if (currentTrack?.id === track.id && audio) {
       if (audio.paused) {
@@ -317,6 +323,7 @@ const Audios = () => {
       subtitle: chapter.author,
       src: chapter.src,
       collection: "Ebook Oficial",
+      available: Boolean(chapter.src),
     });
   };
 
@@ -327,6 +334,7 @@ const Audios = () => {
       subtitle: item.author,
       src: track.src,
       collection: item.title,
+      available: !track.duration.includes("A liberar") && Boolean(track.src),
     });
   };
 

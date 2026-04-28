@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTransactions, formatCurrency } from "@/hooks/useFinance";
 import { MobileShell } from "@/components/MobileShell";
 import { MentorCard } from "@/components/MentorCard";
@@ -6,7 +6,7 @@ import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { IceBreakerHero } from "@/components/IceBreakerHero";
-import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -14,11 +14,59 @@ import { Transaction } from "@/types";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+const HOME_ACTIONS = [
+  {
+    title: "Bônus Exclusivo",
+    kicker: "Biblioteca de Inspiração",
+    description: "Acesse bestsellers selecionados com faixas organizadas por obra para escutar, refletir e destravar novas decisões financeiras.",
+    to: "/audios",
+    icon: Headphones,
+    cta: "Abrir acervo",
+  },
+  {
+    title: "Calculadora",
+    kicker: "Clareza para decidir",
+    description: "Simule juros, dívidas, metas e cenários de crescimento antes de agir. Menos achismo, mais controle.",
+    to: "/calculadora",
+    icon: Calculator,
+    cta: "Calcular agora",
+  },
+  {
+    title: "Trilha de aprendizado",
+    kicker: "Ebook oficial em áudio",
+    description: "Siga os capítulos da Jornada do Progresso em sequência, com insights e desafios práticos para manter evolução diária.",
+    to: "/audios",
+    icon: BookOpen,
+    cta: "Ouvir trilha",
+  },
+];
+
 const Home = () => {
   const { transactions, totals, removeTransaction } = useTransactions();
   const recent = transactions.slice(0, 6);
   const balancePositive = totals.balance >= 0;
   const [editing, setEditing] = useState<Transaction | null>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [activeAction, setActiveAction] = useState(0);
+
+  const scrollAction = (direction: "left" | "right") => {
+    const next = direction === "left" ? Math.max(activeAction - 1, 0) : Math.min(activeAction + 1, HOME_ACTIONS.length - 1);
+    setActiveAction(next);
+    actionsRef.current?.querySelectorAll<HTMLElement>("[data-home-action]")[next]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  };
+
+  const handleActionScroll = () => {
+    const el = actionsRef.current;
+    if (!el) return;
+    const center = el.scrollLeft + el.clientWidth / 2;
+    const cards = Array.from(el.querySelectorAll<HTMLElement>("[data-home-action]"));
+    const closest = cards.reduce((best, card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(center - cardCenter);
+      return distance < best.distance ? { index, distance } : best;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY });
+    setActiveAction(closest.index);
+  };
 
   const classBadge = (c?: Transaction["classification"]) => {
     if (!c) return null;
@@ -72,47 +120,72 @@ const Home = () => {
         <IceBreakerHero />
       </div>
 
-      <div className="mt-5"><MentorCard /></div>
+      {/* INÍCIO — 3 cards abaixo do Mentor */}
+      <section className="mt-5 overflow-visible">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-primary">Início</p>
+            <h2 className="text-base font-bold tracking-tight">Continue sua jornada</h2>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button type="button" aria-label="Card anterior" onClick={() => scrollAction("left")} className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-primary shadow-soft transition-smooth active:scale-95">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button type="button" aria-label="Próximo card" onClick={() => scrollAction("right")} className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-primary shadow-soft transition-smooth active:scale-95">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
 
-      {/* ATALHOS — Bônus + Calculadora + Ebook */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <Link
-          to="/audios"
-          className="group flex min-h-[104px] flex-col justify-between gap-3 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
+        <div
+          ref={actionsRef}
+          onScroll={handleActionScroll}
+          className="-mx-5 flex snap-x snap-mandatory overflow-x-auto overflow-y-visible px-8 pb-4 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-soft">
-            <Headphones className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-bold leading-tight">Bônus Exclusivo</p>
-            <p className="text-[11px] text-muted-foreground">Biblioteca de Inspiração</p>
-          </div>
-        </Link>
-        <Link
-          to="/calculadora"
-          className="group flex min-h-[104px] flex-col justify-between gap-3 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-soft">
-            <Calculator className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-bold leading-tight">Calculadora</p>
-            <p className="text-[11px] text-muted-foreground">Juros, FIRE, dívidas</p>
-          </div>
-        </Link>
-        <Link
-          to="/audios"
-          className="group col-span-2 flex min-h-[94px] items-center gap-4 rounded-[1.35rem] border border-border/70 bg-card p-4 shadow-soft transition-smooth active:scale-[0.98]"
-        >
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent shadow-soft">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold leading-tight">Capítulos do Ebook Oficial</p>
-            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Áudios da jornada organizados por capítulo</p>
-          </div>
-        </Link>
-      </div>
+          {HOME_ACTIONS.map((action, index) => {
+            const active = activeAction === index;
+            const Icon = action.icon;
+            return (
+              <Link
+                key={action.title}
+                to={action.to}
+                data-home-action
+                className={cn(
+                  "group relative flex min-h-[248px] min-w-[60%] snap-center flex-col justify-between overflow-hidden rounded-[1.15rem] border bg-card p-4 shadow-soft transition-all duration-300 first:ml-0 -ml-16 active:scale-[0.98]",
+                  active
+                    ? "z-40 translate-y-0 scale-100 border-primary shadow-floating opacity-100"
+                    : "z-0 translate-y-4 scale-[0.9] border-border/70 opacity-60"
+                )}
+              >
+                <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
+                <span className="relative flex items-start justify-between gap-3">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-elevated">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">D21</span>
+                </span>
+
+                <span className="relative block space-y-3">
+                  <span className="block text-[11px] font-semibold text-muted-foreground">{action.kicker}</span>
+                  <span className="block text-lg font-bold leading-[1.05] tracking-tight">{action.title}</span>
+                  <span className="block text-xs leading-relaxed text-muted-foreground">{action.description}</span>
+                </span>
+
+                <span className="relative flex items-center justify-between gap-3 pt-4">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
+                    <Sparkles className="h-3.5 w-3.5" /> {action.cta}
+                  </span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-soft transition-smooth group-hover:translate-x-0.5">
+                    <ChevronRight className="h-4 w-4" />
+                  </span>
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="mt-5"><MentorCard /></div>
 
       {/* METAS — controle gamificado */}
       <div className="mt-5"><GoalsCard /></div>
