@@ -42,15 +42,9 @@ export function useDay1() {
   const { transactions } = useTransactions();
   const { toggleDay, isCompleted } = useJourney();
 
-  const day1Txs = useMemo(() => {
-    if (!state.startedAt) return [];
-    return transactions.filter(
-      (t) => !state.baselineTxIds.includes(t.id) && new Date(t.createdAt) >= new Date(state.startedAt!)
-    );
-  }, [transactions, state.startedAt, state.baselineTxIds]);
-
-  const incomeTxs = day1Txs.filter((t) => t.type === "income");
-  const expenseTxs = day1Txs.filter((t) => t.type === "expense");
+  // Conta todas as transações do usuário — qualquer lançamento conta para a missão.
+  const incomeTxs = useMemo(() => transactions.filter((t) => t.type === "income"), [transactions]);
+  const expenseTxs = useMemo(() => transactions.filter((t) => t.type === "expense"), [transactions]);
   const classifiedCount = expenseTxs.filter((t) => state.esm[t.id]).length;
 
   // Missões alinhadas aos 3 pilares de Cerbasi (Cap. 1)
