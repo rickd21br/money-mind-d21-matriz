@@ -182,48 +182,6 @@ function InspirationCard({ item, index, active }: { item: InspirationAudio; inde
   );
 }
 
-function LegacyInspirationCard({ item }: { item: InspirationAudio }) {
-  const Icon = inspirationIcons[item.icon];
-
-  return (
-    <article className="min-w-[78%] rounded-3xl bg-card p-4 shadow-soft transition-smooth first:ml-0 -ml-5">
-      <header className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-1 flex items-center gap-2">
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-              {item.format}
-            </span>
-            <span className="text-[10px] font-semibold text-muted-foreground">{item.duration}</span>
-          </div>
-          <h3 className="text-sm font-bold leading-tight">{item.title}</h3>
-          <p className="text-xs text-muted-foreground">{item.author}</p>
-        </div>
-      </header>
-
-      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
-
-      <div className="mt-3">
-        {item.src ? (
-          <audio
-            src={item.src}
-            controls
-            controlsList="nodownload noplaybackrate"
-            onContextMenu={(e) => e.preventDefault()}
-            className="w-full"
-          />
-        ) : (
-          <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3 text-center text-[11px] text-muted-foreground">
-            Player reservado para o áudio do acervo.
-          </div>
-        )}
-      </div>
-    </article>
-  );
-}
-
 const Audios = () => {
   const { state } = useAudioProgress();
   const inspirationScrollRef = useRef<HTMLDivElement>(null);
