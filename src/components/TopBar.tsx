@@ -1,7 +1,8 @@
-import { Bell, Menu, Home, Target, Plus, BarChart3, User as UserIcon, Sun, Moon, Settings } from "lucide-react";
+import { Bell, Menu, Home, Target, Plus, BarChart3, User as UserIcon, Sun, Moon, Settings, LogOut } from "lucide-react";
 import { useUser, useJourney } from "@/hooks/useFinance";
 import { useTheme } from "@/hooks/useTheme";
 import { useStorage } from "@/hooks/useStorage";
+import { endSession } from "@/hooks/useSession";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -109,6 +110,18 @@ export function TopBar() {
             <DropdownMenuItem onClick={toggleNotifications}>
               <Settings className="mr-2 h-4 w-4" />
               {notifications ? "Desativar notificações" : "Ativar notificações"}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                endSession();
+                window.dispatchEvent(new Event("d21:session-change"));
+                toast.success("Sessão encerrada", { description: "Seus dados ficam salvos." });
+                navigate("/bem-vindo", { replace: true });
+              }}
+              className="text-danger focus:text-danger"
+            >
+              <LogOut className="mr-2 h-4 w-4" /> Sair da conta
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
