@@ -76,13 +76,19 @@ const Onboarding = () => {
       return;
     }
     const first = getFirstName(trimmedName);
-    // 1) Ativa sessão deste usuário ANTES de gravar (dados ficam no namespace dele)
+    // 1) Ativa sessão deste usuário ANTES de qualquer escrita escopada
     setActiveEmail(trimmedEmail);
-    window.dispatchEvent(new Event("d21:session-change"));
-    // 2) Grava perfil sob a chave escopada
-    setUser({ name: trimmedName, email: trimmedEmail });
-    setFirstName(first);
+    // 2) Grava DIRETO no localStorage usando o namespace do usuário,
+    //    evitando race conditions com useStorage/setState.
+    const ns = `u:${trimmedEmail.toLowerCase()}:`;
     try {
+      localStorage.setItem(
+        `${ns}d21.user`,
+        JSON.stringify({ name: trimmedName, email: trimmedEmail })
+      );
+      localStorage.setItem(`${ns}d21.firstName`, JSON.stringify(first));
+      localStorage.setItem(`${ns}d21.onboarded`, JSON.stringify(true));
+      // chaves globais legadas
       localStorage.setItem("nome_completo", trimmedName);
       localStorage.setItem("email_usuario", trimmedEmail);
       localStorage.setItem("primeiro_nome", first);
@@ -90,6 +96,11 @@ const Onboarding = () => {
     } catch {
       /* ignore */
     }
+    // 3) Notifica hooks já montados a relerem do novo namespace
+    window.dispatchEvent(new Event("d21:session-change"));
+    // 4) Atualiza estado React (caso instâncias estejam vivas)
+    setUser({ name: trimmedName, email: trimmedEmail });
+    setFirstName(first);
     setOnboarded(true);
     navigate("/", { replace: true });
   };
