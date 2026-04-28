@@ -91,13 +91,42 @@ export function useTransactions() {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   }, [setTransactions]);
 
+  const updateTransaction = useCallback((id: string, patch: Partial<Omit<Transaction, "id" | "createdAt">>) => {
+    setTransactions((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  }, [setTransactions]);
+
   const totals = useMemo(() => {
     const income = transactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
     const expense = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
     return { income, expense, balance: income - expense };
   }, [transactions]);
 
-  return { transactions, addTransaction, removeTransaction, totals };
+  return { transactions, addTransaction, removeTransaction, updateTransaction, totals };
+}
+
+export function useGoals() {
+  const [goals, setGoals] = useStorage<Goal[]>("d21.goals", []);
+
+  const addGoal = useCallback((g: Omit<Goal, "id" | "createdAt">) => {
+    const goal: Goal = { ...g, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    setGoals((prev) => [goal, ...prev]);
+    return goal;
+  }, [setGoals]);
+
+  const updateGoal = useCallback((id: string, patch: Partial<Omit<Goal, "id" | "createdAt">>) => {
+    setGoals((prev) => prev.map((g) => (g.id === id ? { ...g, ...patch } : g)));
+  }, [setGoals]);
+
+  const removeGoal = useCallback((id: string) => {
+    setGoals((prev) => prev.filter((g) => g.id !== id));
+  }, [setGoals]);
+
+  /** Aporte rápido — soma valor ao "saved". */
+  const contribute = useCallback((id: string, amount: number) => {
+    setGoals((prev) => prev.map((g) => (g.id === id ? { ...g, saved: Math.max(0, g.saved + amount) } : g)));
+  }, [setGoals]);
+
+  return { goals, addGoal, updateGoal, removeGoal, contribute };
 }
 
 export function useJourney() {
