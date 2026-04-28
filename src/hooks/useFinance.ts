@@ -36,7 +36,43 @@ export function useCategories() {
     });
   }, [setCustom]);
 
-  return { getGroups, getCategories, addCategory };
+  /** Categorias obrigatórias (do catálogo) NÃO podem ser editadas/removidas. */
+  const isCustomCategory = useCallback((type: TransactionType, group: string, name: string) => {
+    const base = CATEGORY_CATALOG[type]?.[group] ?? [];
+    if (base.includes(name)) return false;
+    return (custom[type]?.[group] ?? []).includes(name);
+  }, [custom]);
+
+  const removeCategory = useCallback((type: TransactionType, group: string, name: string) => {
+    setCustom((prev) => {
+      const list = prev[type]?.[group] ?? [];
+      if (!list.includes(name)) return prev;
+      return {
+        ...prev,
+        [type]: { ...prev[type], [group]: list.filter((c) => c !== name) },
+      };
+    });
+  }, [setCustom]);
+
+  const renameCategory = useCallback((type: TransactionType, group: string, oldName: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === oldName) return;
+    setCustom((prev) => {
+      const list = prev[type]?.[group] ?? [];
+      if (!list.includes(oldName)) return prev;
+      const base = CATEGORY_CATALOG[type]?.[group] ?? [];
+      if (list.includes(trimmed) || base.includes(trimmed)) return prev;
+      return {
+        ...prev,
+        [type]: {
+          ...prev[type],
+          [group]: list.map((c) => (c === oldName ? trimmed : c)),
+        },
+      };
+    });
+  }, [setCustom]);
+
+  return { getGroups, getCategories, addCategory, isCustomCategory, removeCategory, renameCategory };
 }
 
 export function useTransactions() {
