@@ -1,5 +1,8 @@
 export type TransactionType = "income" | "expense";
 
+/** Classificação ESM — pilar central da metodologia (Cerbasi). */
+export type Classification = "essencial" | "superfluo" | "meta";
+
 export interface Transaction {
   id: string;
   type: TransactionType;
@@ -8,6 +11,22 @@ export interface Transaction {
   category: string;
   description: string;
   date: string; // ISO
+  createdAt: string;
+  /** Essencial / Supérfluo / Meta */
+  classification?: Classification;
+}
+
+export interface Goal {
+  id: string;
+  title: string;
+  /** Valor alvo em R$ */
+  target: number;
+  /** Valor já guardado/aportado */
+  saved: number;
+  /** Data limite ISO (yyyy-mm-dd), opcional */
+  deadline?: string;
+  /** Sonho/projeto descrito pelo usuário — usado nos alertas emocionais */
+  dream?: string;
   createdAt: string;
 }
 

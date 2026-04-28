@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { useStorage } from "@/hooks/useStorage";
+import { setActiveEmail } from "@/hooks/useSession";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -75,9 +76,12 @@ const Onboarding = () => {
       return;
     }
     const first = getFirstName(trimmedName);
+    // 1) Ativa sessão deste usuário ANTES de gravar (dados ficam no namespace dele)
+    setActiveEmail(trimmedEmail);
+    window.dispatchEvent(new Event("d21:session-change"));
+    // 2) Grava perfil sob a chave escopada
     setUser({ name: trimmedName, email: trimmedEmail });
     setFirstName(first);
-    // Legacy keys for compatibility with the brief
     try {
       localStorage.setItem("nome_completo", trimmedName);
       localStorage.setItem("email_usuario", trimmedEmail);

@@ -5,16 +5,22 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LogOut, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
+import { endSession } from "@/hooks/useSession";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { user, setUser } = useUser();
   const { progress } = useJourney();
   const { transactions } = useTransactions();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    toast.success("Você saiu da conta", {
-      description: "Recurso completo será habilitado com login.",
+    endSession();
+    window.dispatchEvent(new Event("d21:session-change"));
+    toast.success("Sessão encerrada", {
+      description: "Seus dados ficam salvos. Entre novamente para acessá-los.",
     });
+    navigate("/bem-vindo", { replace: true });
   };
 
   return (
