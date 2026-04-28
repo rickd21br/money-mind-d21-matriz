@@ -225,7 +225,7 @@ export function Day1Experience({ open, onOpenChange }: Props) {
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{tx.description || tx.category}</p>
-                          <p className="text-[11px] text-muted-foreground">R$ {tx.amount.toFixed(2)} • {tx.category}</p>
+                          <p className="text-[11px] text-muted-foreground">{formatCurrency(tx.amount)} • {tx.category}</p>
                         </div>
                       </div>
                       <div className="mt-2 grid grid-cols-3 gap-1.5">
