@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { differenceInDays, parseISO } from "date-fns";
+import { CurrencyInput } from "./CurrencyInput";
+import { parseMaskedToNumber, formatNumberInput, useCurrency } from "@/hooks/useCurrency";
 
 /** Mensagem de impacto baseada no progresso da meta — gatilhos emocionais. */
 function getEmotionalCue(g: Goal): { tag: string; line: string; tone: "alert" | "positive" | "neutral" } {
@@ -51,16 +53,17 @@ interface GoalFormProps {
 }
 
 function GoalForm({ initial, onSubmit, onCancel }: GoalFormProps) {
+  const { code } = useCurrency();
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [target, setTarget] = useState(initial ? String(initial.target).replace(".", ",") : "");
-  const [saved, setSaved] = useState(initial ? String(initial.saved).replace(".", ",") : "0");
+  const [target, setTarget] = useState(initial ? formatNumberInput(initial.target, code) : "");
+  const [saved, setSaved] = useState(initial ? formatNumberInput(initial.saved, code) : "");
   const [dream, setDream] = useState(initial?.dream ?? "");
   const [deadline, setDeadline] = useState(initial?.deadline ?? "");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const t = parseFloat(target.replace(",", "."));
-    const s = parseFloat(saved.replace(",", ".")) || 0;
+    const t = parseMaskedToNumber(target);
+    const s = parseMaskedToNumber(saved);
     if (!title.trim()) { toast.error("Dê um nome à meta"); return; }
     if (!t || t <= 0) { toast.error("Informe o valor alvo"); return; }
     onSubmit({ title: title.trim(), target: t, saved: s, dream: dream.trim() || undefined, deadline: deadline || undefined });
@@ -79,12 +82,12 @@ function GoalForm({ initial, onSubmit, onCancel }: GoalFormProps) {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label htmlFor="g-target">Valor alvo (R$)</Label>
-          <Input id="g-target" inputMode="decimal" value={target} onChange={(e) => setTarget(e.target.value)} placeholder="0,00" className="h-11 rounded-xl" />
+          <Label htmlFor="g-target">Valor alvo</Label>
+          <CurrencyInput id="g-target" value={target} onChange={setTarget} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="g-saved">Já guardado</Label>
-          <Input id="g-saved" inputMode="decimal" value={saved} onChange={(e) => setSaved(e.target.value)} placeholder="0,00" className="h-11 rounded-xl" />
+          <CurrencyInput id="g-saved" value={saved} onChange={setSaved} />
         </div>
       </div>
       <div className="space-y-1.5">
@@ -119,7 +122,7 @@ export function GoalsCard() {
   };
 
   const handleContribute = (id: string) => {
-    const v = parseFloat(contribValue.replace(",", "."));
+    const v = parseMaskedToNumber(contribValue);
     if (!v || v <= 0) { toast.error("Informe um valor"); return; }
     contribute(id, v);
     setContribFor(null); setContribValue("");
@@ -206,14 +209,14 @@ export function GoalsCard() {
                 {/* Aporte rápido */}
                 {contribFor === g.id ? (
                   <div className="mt-2 flex gap-1.5">
-                    <Input
-                      inputMode="decimal"
-                      placeholder="Valor do aporte"
-                      value={contribValue}
-                      onChange={(e) => setContribValue(e.target.value)}
-                      className="h-9 rounded-lg text-sm"
-                      autoFocus
-                    />
+                    <div className="flex-1">
+                      <CurrencyInput
+                        value={contribValue}
+                        onChange={setContribValue}
+                        placeholder="Valor do aporte"
+                        autoFocus
+                      />
+                    </div>
                     <button onClick={() => handleContribute(g.id)} className="rounded-lg bg-success/15 px-2.5 text-success hover:bg-success/25">
                       <Check className="h-4 w-4" />
                     </button>
