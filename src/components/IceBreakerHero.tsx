@@ -5,7 +5,7 @@ import { Sparkles, Play, Pause, Check, ChevronLeft, ChevronRight, Star } from "l
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const MENTOR_IMG = "https://jornadadoprogresso.com/wp-content/uploads/2026/04/mentor1.png";
+const MENTOR_IMG = "https://jornadadoprogresso.com/wp-content/uploads/2026/04/mentoronline.png";
 
 /**
  * Container "Comece aqui — Quebra-Gelo" com estética neomórfica + neon.
