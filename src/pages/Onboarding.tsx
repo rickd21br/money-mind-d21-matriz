@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { useStorage } from "@/hooks/useStorage";
+import { setActiveEmail } from "@/hooks/useSession";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
