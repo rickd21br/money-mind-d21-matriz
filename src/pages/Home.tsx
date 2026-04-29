@@ -129,7 +129,7 @@ const Home = () => {
         <div
           ref={actionsRef}
           onScroll={handleActionScroll}
-          className="-mx-5 flex snap-x snap-mandatory overflow-x-auto overflow-y-visible px-8 pb-4 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible px-8 pb-4 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {HOME_ACTIONS.map((action, index) => {
             const active = activeAction === index;
@@ -149,6 +149,20 @@ const Home = () => {
               </Link>
             );
           })}
+        </div>
+        <div className="flex justify-center gap-1.5" aria-label="Controle do carrossel">
+          {HOME_ACTIONS.map((action, index) => (
+            <button
+              key={action.title}
+              type="button"
+              aria-label={`Ir para ${action.title}`}
+              onClick={() => {
+                setActiveAction(index);
+                actionsRef.current?.querySelectorAll<HTMLElement>("[data-home-action]")[index]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+              }}
+              className={cn("h-1.5 rounded-full transition-all", activeAction === index ? "w-5 bg-primary" : "w-1.5 bg-primary/20")}
+            />
+          ))}
         </div>
       </section>
 
