@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ICE_BREAKER_AUDIOS } from "@/data/iceBreakerAudios";
 import { useIceBreakerProgress } from "@/hooks/useIceBreakerProgress";
-import { Sparkles, Play, Pause, Check, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Sparkles, Play, Pause, Check, ChevronLeft, ChevronRight, Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ const MENTOR_IMG = "https://jornadadoprogresso.com/wp-content/uploads/2026/04/me
  */
 export function IceBreakerHero() {
   const { state, setProgress, isCompleted, getProgress } = useIceBreakerProgress();
+  const [open, setOpen] = useState(false);
   const [index, setIndex] = useState<number>(() => {
     const firstPending = ICE_BREAKER_AUDIOS.findIndex((a) => !state.completed.includes(a.id));
     return firstPending === -1 ? 0 : firstPending;
@@ -158,6 +159,17 @@ export function IceBreakerHero() {
           <MentorAvatar playing={playing} />
         </div>
 
+        {/* Botão retrátil abaixo do avatar */}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Recolher Quebra-Gelo" : "Expandir Quebra-Gelo"}
+          aria-expanded={open}
+          className="absolute right-8 top-[5.1rem] z-20 flex h-7 w-7 items-center justify-center rounded-full bg-[hsl(165_40%_7%)] text-[hsl(var(--primary-glow))] shadow-[inset_3px_3px_8px_hsl(165_50%_3%/0.8),_inset_-2px_-2px_6px_hsl(165_30%_14%/0.45)] transition-smooth active:scale-95"
+        >
+          <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open && "rotate-180")} />
+        </button>
+
         {/* XP burst dentro do card */}
         {xpBurst !== null && (
           <div className="pointer-events-none absolute right-5 top-20 z-10 animate-fade-in">
@@ -167,8 +179,14 @@ export function IceBreakerHero() {
           </div>
         )}
 
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-500 ease-out",
+            open ? "mt-4 max-h-[24rem] opacity-100" : "mt-0 max-h-0 opacity-0",
+          )}
+        >
         {/* Bloco atual */}
-        <div className={cn("mt-4 rounded-2xl bg-[hsl(165_40%_7%)] p-3", neuIn)}>
+        <div className={cn("rounded-2xl bg-[hsl(165_40%_7%)] p-3", neuIn)}>
           <div className="flex items-center justify-between gap-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--primary-glow))]">
               Bloco {current.number} · {current.duration}
@@ -275,6 +293,7 @@ export function IceBreakerHero() {
               />
             );
           })}
+        </div>
         </div>
       </div>
     </section>
