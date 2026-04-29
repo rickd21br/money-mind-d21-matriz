@@ -133,41 +133,19 @@ const Home = () => {
         >
           {HOME_ACTIONS.map((action, index) => {
             const active = activeAction === index;
-            const Icon = action.icon;
             return (
               <Link
                 key={action.title}
                 to={action.to}
                 data-home-action
                 className={cn(
-                  "group relative flex min-h-[248px] min-w-[60%] snap-center flex-col justify-between overflow-hidden rounded-[1.15rem] border bg-card p-4 shadow-soft transition-all duration-300 first:ml-0 -ml-16 active:scale-[0.98]",
+                  "relative block min-w-[76%] snap-center overflow-hidden rounded-[1.15rem] bg-card shadow-floating transition-all duration-300 first:ml-0 active:scale-[0.98] sm:min-w-[68%]",
                   active
-                    ? "z-40 translate-y-0 scale-100 border-primary shadow-floating opacity-100"
-                    : "z-0 translate-y-4 scale-[0.9] border-border/70 opacity-60"
+                    ? "z-40 translate-y-0 scale-100 opacity-100"
+                    : "z-0 translate-y-3 scale-[0.94] opacity-70"
                 )}
               >
-                <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/10 to-transparent" />
-                <span className="relative flex items-start justify-between gap-3">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-elevated">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary">D21</span>
-                </span>
-
-                <span className="relative block space-y-3">
-                  <span className="block text-[11px] font-semibold text-muted-foreground">{action.kicker}</span>
-                  <span className="block text-lg font-bold leading-[1.05] tracking-tight">{action.title}</span>
-                  <span className="block text-xs leading-relaxed text-muted-foreground">{action.description}</span>
-                </span>
-
-                <span className="relative flex items-center justify-between gap-3 pt-4">
-                  <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-primary">
-                    <Sparkles className="h-3.5 w-3.5" /> {action.cta}
-                  </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-soft transition-smooth group-hover:translate-x-0.5">
-                    <ChevronRight className="h-4 w-4" />
-                  </span>
-                </span>
+                <img src={action.image} alt={action.title} loading="lazy" className="aspect-[9/13] w-full object-cover" />
               </Link>
             );
           })}
