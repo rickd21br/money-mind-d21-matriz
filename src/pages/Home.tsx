@@ -6,7 +6,7 @@ import { WeeklyChart } from "@/components/WeeklyChart";
 import { GoalsCard } from "@/components/GoalsCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { IceBreakerHero } from "@/components/IceBreakerHero";
-import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, Headphones, Calculator, BookOpen, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Wallet, Receipt, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -17,27 +17,18 @@ import { cn } from "@/lib/utils";
 const HOME_ACTIONS = [
   {
     title: "Bônus Exclusivo",
-    kicker: "Biblioteca de Inspiração",
-    description: "Acesse bestsellers selecionados com faixas organizadas por obra para escutar, refletir e destravar novas decisões financeiras.",
     to: "/audios",
-    icon: Headphones,
-    cta: "Abrir acervo",
+    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome1.png",
   },
   {
     title: "Calculadora",
-    kicker: "Clareza para decidir",
-    description: "Simule juros, dívidas, metas e cenários de crescimento antes de agir. Menos achismo, mais controle.",
     to: "/calculadora",
-    icon: Calculator,
-    cta: "Calcular agora",
+    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome2.png",
   },
   {
     title: "Trilha de aprendizado",
-    kicker: "Ebook oficial em áudio",
-    description: "Siga os capítulos da Jornada do Progresso em sequência, com insights e desafios práticos para manter evolução diária.",
     to: "/audios",
-    icon: BookOpen,
-    cta: "Ouvir trilha",
+    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome3.png",
   },
 ];
 
