@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { useUser, useJourney, useTransactions } from "@/hooks/useFinance";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon, Globe } from "lucide-react";
+import { LogOut, User as UserIcon, Globe, KeyRound, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { endSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router-dom";
 import { CurrencySelect } from "@/components/CurrencySelect";
+import { hasPinFor, savePin, removePin } from "@/hooks/usePin";
 
 const Profile = () => {
   const { user, setUser } = useUser();
   const { progress } = useJourney();
   const { transactions } = useTransactions();
   const navigate = useNavigate();
+
+  const pinExists = hasPinFor(user.email);
+  const [showPinForm, setShowPinForm] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
 
   const handleLogout = () => {
     endSession();
@@ -22,6 +29,32 @@ const Profile = () => {
       description: "Seus dados ficam salvos. Entre novamente para acessá-los.",
     });
     navigate("/bem-vindo", { replace: true });
+  };
+
+  const handleSavePin = () => {
+    if (!user.email) {
+      toast.error("Faça login antes de criar um PIN");
+      return;
+    }
+    if (!/^\d{4}$/.test(pin)) {
+      toast.error("O PIN deve ter exatamente 4 dígitos");
+      return;
+    }
+    if (pin !== pinConfirm) {
+      toast.error("Os PINs não coincidem");
+      return;
+    }
+    savePin(user.email, pin);
+    setPin("");
+    setPinConfirm("");
+    setShowPinForm(false);
+    toast.success(pinExists ? "PIN atualizado! 🔒" : "PIN criado! 🔒");
+  };
+
+  const handleRemovePin = () => {
+    removePin(user.email);
+    setShowPinForm(false);
+    toast.success("PIN removido");
   };
 
   return (
