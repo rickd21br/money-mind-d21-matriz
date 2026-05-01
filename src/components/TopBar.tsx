@@ -48,8 +48,11 @@ export function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-2 px-5 pt-4">
+    <header
+      className="sticky top-0 z-30 bg-background/85 backdrop-blur-xl"
+      style={{ paddingTop: "max(env(safe-area-inset-top), 2.25rem)" }}
+    >
+      <div className="mx-auto flex max-w-md items-center justify-between gap-2 px-5 pt-2">
         {/* Notifications */}
         <button
           type="button"
