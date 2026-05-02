@@ -270,9 +270,12 @@ const Onboarding = () => {
         className="fixed inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/85"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-full w-full max-w-md flex-col px-5 pb-8 pt-5 sm:max-w-lg sm:px-6">
-        {/* HEADER */}
-        <header className="flex items-center justify-between">
+      <div
+        className="relative z-10 mx-auto flex min-h-full w-full max-w-md flex-col px-5 pb-8 sm:max-w-lg sm:px-6"
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}
+      >
+        {/* HEADER (logo apenas) */}
+        <header className="flex items-center">
           <div className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-elevated">
               <Sparkles className="h-5 w-5 text-primary-foreground" />
@@ -283,48 +286,6 @@ const Onboarding = () => {
                 Finanças Controladas V1.1
               </p>
             </div>
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setInstallOpen((v) => !v)}
-              className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
-            >
-              Instalar App
-            </button>
-
-            {installOpen && (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-30 w-[180px] rounded-2xl border border-white/15 bg-black/60 p-3 shadow-floating backdrop-blur-xl">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/80">
-                    Instalar
-                  </p>
-                  <button
-                    type="button"
-                    aria-label="Fechar"
-                    onClick={() => setInstallOpen(false)}
-                    className="text-white/70 hover:text-white"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleInstall("mobile")}
-                  className="mb-1.5 flex w-full items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-white transition hover:bg-white/20"
-                >
-                  <Smartphone className="h-3.5 w-3.5" /> No celular
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInstall("desktop")}
-                  className="flex w-full items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-white transition hover:bg-white/20"
-                >
-                  <Monitor className="h-3.5 w-3.5" /> No desktop
-                </button>
-              </div>
-            )}
           </div>
         </header>
 
