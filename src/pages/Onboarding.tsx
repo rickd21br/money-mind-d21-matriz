@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Smartphone,
-  Monitor,
   X,
   User as UserIcon,
   Mail,
