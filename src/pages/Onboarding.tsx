@@ -9,11 +9,8 @@ import {
   BarChart3,
   Sparkles,
   Globe,
-  HelpCircle,
   Lock,
   KeyRound,
-  RefreshCw,
-  Download,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { usePWAUpdate } from "@/hooks/usePWAUpdate";
