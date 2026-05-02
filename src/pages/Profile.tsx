@@ -4,23 +4,40 @@ import { useUser, useJourney, useTransactions } from "@/hooks/useFinance";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon, Globe, KeyRound, Trash2 } from "lucide-react";
+import { LogOut, User as UserIcon, Globe, KeyRound, Trash2, Database, Download, Upload, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { endSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router-dom";
 import { CurrencySelect } from "@/components/CurrencySelect";
 import { hasPinFor, savePin, removePin } from "@/hooks/usePin";
+import { exportData, importDataPicker } from "@/lib/dataBackup";
+import { usePWAUpdate } from "@/hooks/usePWAUpdate";
 
 const Profile = () => {
   const { user, setUser } = useUser();
   const { progress } = useJourney();
   const { transactions } = useTransactions();
   const navigate = useNavigate();
+  const { needRefresh, checking, checkForUpdate, applyUpdate } = usePWAUpdate();
 
   const pinExists = hasPinFor(user.email);
   const [showPinForm, setShowPinForm] = useState(false);
   const [pin, setPin] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
+
+  const handleCheckUpdate = async () => {
+    if (needRefresh) {
+      toast.success("Atualizando o app…");
+      await applyUpdate();
+      return;
+    }
+    toast.info("Procurando atualização…");
+    await checkForUpdate();
+    setTimeout(async () => {
+      if (needRefresh) await applyUpdate();
+      else toast.success("Você já está na versão mais recente.");
+    }, 1800);
+  };
 
   const handleLogout = () => {
     endSession();
@@ -201,6 +218,71 @@ const Profile = () => {
             </div>
           </div>
         )}
+      </section>
+
+      {/* Backup de dados (exportar / importar) */}
+      <section className="mt-6 space-y-4 rounded-3xl bg-card p-5 shadow-soft">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15">
+            <Database className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Backup dos lançamentos</p>
+            <p className="text-xs text-muted-foreground">
+              Exporte seus dados para usar em outro dispositivo ou navegador.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            variant="outline"
+            className="h-11 flex-1 rounded-xl"
+            onClick={() => {
+              exportData();
+              toast.success("Backup exportado!", { description: "Arquivo .json salvo no seu dispositivo." });
+            }}
+          >
+            <Download className="mr-2 h-4 w-4" /> Exportar dados
+          </Button>
+          <Button
+            variant="outline"
+            className="h-11 flex-1 rounded-xl"
+            onClick={() => importDataPicker("merge")}
+          >
+            <Upload className="mr-2 h-4 w-4" /> Importar dados
+          </Button>
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          Importar mescla os lançamentos do arquivo aos atuais. Após importar, o app recarrega automaticamente.
+        </p>
+      </section>
+
+      {/* Atualização do app */}
+      <section className="mt-6 space-y-4 rounded-3xl bg-card p-5 shadow-soft">
+        <div className="flex items-center gap-2.5">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15">
+            <RefreshCw className={`h-5 w-5 text-primary ${checking ? "animate-spin" : ""}`} />
+            {needRefresh && (
+              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-accent" />
+            )}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Atualização do app</p>
+            <p className="text-xs text-muted-foreground">
+              {needRefresh
+                ? "Nova versão disponível! Toque para atualizar."
+                : "Verifique se há uma versão nova do Money Mind 21D."}
+            </p>
+          </div>
+        </div>
+        <Button
+          className="h-11 w-full rounded-xl"
+          onClick={handleCheckUpdate}
+          disabled={checking}
+        >
+          <RefreshCw className={`mr-2 h-4 w-4 ${checking ? "animate-spin" : ""}`} />
+          {needRefresh ? "Atualizar agora" : checking ? "Verificando…" : "Verificar atualização"}
+        </Button>
       </section>
 
       <Button

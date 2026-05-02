@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Smartphone,
-  Monitor,
   X,
   User as UserIcon,
   Mail,
@@ -14,8 +12,11 @@ import {
   HelpCircle,
   Lock,
   KeyRound,
+  RefreshCw,
+  Download,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
+import { usePWAUpdate } from "@/hooks/usePWAUpdate";
 import { useStorage } from "@/hooks/useStorage";
 import { setActiveEmail } from "@/hooks/useSession";
 import {
@@ -54,7 +55,7 @@ const Onboarding = () => {
   const [email, setEmail] = useState(user.email || "");
   const [currency, setCurrency] = useState<string>("BRL");
   const [installPrompt, setInstallPrompt] = useState<BIPEvent | null>(null);
-  const [installOpen, setInstallOpen] = useState(false);
+  const { checking, checkForUpdate, applyUpdate, needRefresh } = usePWAUpdate();
 
   // Tutorial popup
   const [tutorialOpen, setTutorialOpen] = useState(false);
@@ -99,7 +100,7 @@ const Onboarding = () => {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  const handleInstall = async (target: "mobile" | "desktop") => {
+  const handleInstall = async () => {
     if (installPrompt) {
       await installPrompt.prompt();
       const choice = await installPrompt.userChoice;
@@ -108,13 +109,32 @@ const Onboarding = () => {
         setInstallPrompt(null);
       }
     } else {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       toast.info(
-        target === "mobile"
-          ? "No celular: toque em Compartilhar → Adicionar à tela inicial."
-          : "No desktop: clique no ícone de instalar na barra de endereço."
+        isIOS
+          ? "No iPhone: toque em Compartilhar → Adicionar à Tela de Início."
+          : "Use o menu do navegador → Instalar app / Adicionar à tela inicial.",
+        { duration: 5000 }
       );
     }
-    setInstallOpen(false);
+  };
+
+  const handleUpdate = async () => {
+    if (needRefresh) {
+      toast.success("Atualizando o app…");
+      await applyUpdate();
+      return;
+    }
+    toast.info("Procurando atualização…");
+    await checkForUpdate();
+    // Se após checagem houver nova versão, aplica direto.
+    setTimeout(async () => {
+      if (needRefresh) {
+        await applyUpdate();
+      } else {
+        toast.success("Você já está na versão mais recente.");
+      }
+    }, 1800);
   };
 
   /** Persiste o usuário no localStorage e navega pra Home. */
@@ -248,9 +268,12 @@ const Onboarding = () => {
         className="fixed inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/85"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-full w-full max-w-md flex-col px-5 pb-8 pt-5 sm:max-w-lg sm:px-6">
-        {/* HEADER */}
-        <header className="flex items-center justify-between">
+      <div
+        className="relative z-10 mx-auto flex min-h-full w-full max-w-md flex-col px-5 pb-8 sm:max-w-lg sm:px-6"
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}
+      >
+        {/* HEADER (logo apenas) */}
+        <header className="flex items-center">
           <div className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-elevated">
               <Sparkles className="h-5 w-5 text-primary-foreground" />
@@ -261,48 +284,6 @@ const Onboarding = () => {
                 Finanças Controladas V1.1
               </p>
             </div>
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setInstallOpen((v) => !v)}
-              className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
-            >
-              Instalar App
-            </button>
-
-            {installOpen && (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-30 w-[180px] rounded-2xl border border-white/15 bg-black/60 p-3 shadow-floating backdrop-blur-xl">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/80">
-                    Instalar
-                  </p>
-                  <button
-                    type="button"
-                    aria-label="Fechar"
-                    onClick={() => setInstallOpen(false)}
-                    className="text-white/70 hover:text-white"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleInstall("mobile")}
-                  className="mb-1.5 flex w-full items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-white transition hover:bg-white/20"
-                >
-                  <Smartphone className="h-3.5 w-3.5" /> No celular
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInstall("desktop")}
-                  className="flex w-full items-center gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-white transition hover:bg-white/20"
-                >
-                  <Monitor className="h-3.5 w-3.5" /> No desktop
-                </button>
-              </div>
-            )}
           </div>
         </header>
 
@@ -326,15 +307,41 @@ const Onboarding = () => {
               onSubmit={handleSubmit}
               className="relative mt-7 space-y-3.5 rounded-3xl border border-white/15 bg-white/10 p-5 shadow-floating backdrop-blur-xl"
             >
-              {/* Botão de ajuda */}
-              <button
-                type="button"
-                aria-label="Ajuda"
-                onClick={() => setTutorialOpen((v) => !v)}
-                className="absolute -top-3 -right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
-              >
-                <HelpCircle className="h-5 w-5" />
-              </button>
+              {/* Grupo de ações: ajuda, atualizar, instalar */}
+              <div className="absolute -top-4 right-3 z-10 flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Ajuda / tutorial"
+                  title="Ajuda"
+                  onClick={() => setTutorialOpen((v) => !v)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <HelpCircle className="h-[18px] w-[18px]" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Atualizar app"
+                  title={needRefresh ? "Nova versão disponível!" : "Verificar atualização"}
+                  onClick={handleUpdate}
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30 ${
+                    checking ? "opacity-70" : ""
+                  }`}
+                >
+                  <RefreshCw className={`h-[18px] w-[18px] ${checking ? "animate-spin" : ""}`} />
+                  {needRefresh && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-black/40" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Instalar app"
+                  title="Instalar app"
+                  onClick={handleInstall}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <Download className="h-[18px] w-[18px]" />
+                </button>
+              </div>
 
               <div className="space-y-1.5">
                 <label htmlFor="name" className="text-xs font-medium text-white/85">
