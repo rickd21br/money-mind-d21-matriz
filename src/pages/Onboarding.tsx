@@ -57,7 +57,7 @@ const Onboarding = () => {
   const [email, setEmail] = useState(user.email || "");
   const [currency, setCurrency] = useState<string>("BRL");
   const [installPrompt, setInstallPrompt] = useState<BIPEvent | null>(null);
-  const [installOpen, setInstallOpen] = useState(false);
+  const { checking, checkForUpdate, applyUpdate, needRefresh } = usePWAUpdate();
 
   // Tutorial popup
   const [tutorialOpen, setTutorialOpen] = useState(false);
