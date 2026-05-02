@@ -18,11 +18,26 @@ const Profile = () => {
   const { progress } = useJourney();
   const { transactions } = useTransactions();
   const navigate = useNavigate();
+  const { needRefresh, checking, checkForUpdate, applyUpdate } = usePWAUpdate();
 
   const pinExists = hasPinFor(user.email);
   const [showPinForm, setShowPinForm] = useState(false);
   const [pin, setPin] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
+
+  const handleCheckUpdate = async () => {
+    if (needRefresh) {
+      toast.success("Atualizando o app…");
+      await applyUpdate();
+      return;
+    }
+    toast.info("Procurando atualização…");
+    await checkForUpdate();
+    setTimeout(async () => {
+      if (needRefresh) await applyUpdate();
+      else toast.success("Você já está na versão mais recente.");
+    }, 1800);
+  };
 
   const handleLogout = () => {
     endSession();
