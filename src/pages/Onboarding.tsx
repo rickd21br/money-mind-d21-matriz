@@ -307,15 +307,41 @@ const Onboarding = () => {
               onSubmit={handleSubmit}
               className="relative mt-7 space-y-3.5 rounded-3xl border border-white/15 bg-white/10 p-5 shadow-floating backdrop-blur-xl"
             >
-              {/* Botão de ajuda */}
-              <button
-                type="button"
-                aria-label="Ajuda"
-                onClick={() => setTutorialOpen((v) => !v)}
-                className="absolute -top-3 -right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
-              >
-                <HelpCircle className="h-5 w-5" />
-              </button>
+              {/* Grupo de ações: ajuda, atualizar, instalar */}
+              <div className="absolute -top-4 right-3 z-10 flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Ajuda / tutorial"
+                  title="Ajuda"
+                  onClick={() => setTutorialOpen((v) => !v)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <HelpCircle className="h-[18px] w-[18px]" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Atualizar app"
+                  title={needRefresh ? "Nova versão disponível!" : "Verificar atualização"}
+                  onClick={handleUpdate}
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30 ${
+                    checking ? "opacity-70" : ""
+                  }`}
+                >
+                  <RefreshCw className={`h-[18px] w-[18px] ${checking ? "animate-spin" : ""}`} />
+                  {needRefresh && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-black/40" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Instalar app"
+                  title="Instalar app"
+                  onClick={handleInstall}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <Download className="h-[18px] w-[18px]" />
+                </button>
+              </div>
 
               <div className="space-y-1.5">
                 <label htmlFor="name" className="text-xs font-medium text-white/85">
