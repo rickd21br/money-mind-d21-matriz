@@ -14,8 +14,11 @@ import {
   HelpCircle,
   Lock,
   KeyRound,
+  RefreshCw,
+  Download,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
+import { usePWAUpdate } from "@/hooks/usePWAUpdate";
 import { useStorage } from "@/hooks/useStorage";
 import { setActiveEmail } from "@/hooks/useSession";
 import {
