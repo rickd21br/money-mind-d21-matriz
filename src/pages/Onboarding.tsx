@@ -102,7 +102,7 @@ const Onboarding = () => {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  const handleInstall = async (target: "mobile" | "desktop") => {
+  const handleInstall = async () => {
     if (installPrompt) {
       await installPrompt.prompt();
       const choice = await installPrompt.userChoice;
@@ -111,13 +111,32 @@ const Onboarding = () => {
         setInstallPrompt(null);
       }
     } else {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       toast.info(
-        target === "mobile"
-          ? "No celular: toque em Compartilhar → Adicionar à tela inicial."
-          : "No desktop: clique no ícone de instalar na barra de endereço."
+        isIOS
+          ? "No iPhone: toque em Compartilhar → Adicionar à Tela de Início."
+          : "Use o menu do navegador → Instalar app / Adicionar à tela inicial.",
+        { duration: 5000 }
       );
     }
-    setInstallOpen(false);
+  };
+
+  const handleUpdate = async () => {
+    if (needRefresh) {
+      toast.success("Atualizando o app…");
+      await applyUpdate();
+      return;
+    }
+    toast.info("Procurando atualização…");
+    await checkForUpdate();
+    // Se após checagem houver nova versão, aplica direto.
+    setTimeout(async () => {
+      if (needRefresh) {
+        await applyUpdate();
+      } else {
+        toast.success("Você já está na versão mais recente.");
+      }
+    }, 1800);
   };
 
   /** Persiste o usuário no localStorage e navega pra Home. */
