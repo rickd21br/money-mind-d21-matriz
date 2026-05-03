@@ -632,7 +632,7 @@ const Onboarding = () => {
             onClick={closeTutorial}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
-          <div className="relative w-full max-w-sm rounded-3xl border border-white/15 bg-card/85 backdrop-blur-md p-6 shadow-floating animate-bounce-in">
+          <div className="relative w-full max-w-sm rounded-3xl border border-white/15 bg-card p-6 shadow-floating animate-bounce-in">
             <button
               type="button"
               aria-label="Fechar"
