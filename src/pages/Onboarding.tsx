@@ -667,7 +667,7 @@ const Onboarding = () => {
                   </div>
                 </div>
               </div>
-              <h2 className="mt-4 text-lg font-bold text-foreground">
+              <h2 className="mt-4 w-full text-center text-lg font-bold text-foreground">
                 Bem-vindo ao Money Mind 21D
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
