@@ -642,7 +642,7 @@ const Onboarding = () => {
               <X className="h-4 w-4" />
             </button>
 
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-start text-left">
               <div className="flex items-center gap-3">
                 <div
                   className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-background"
@@ -659,7 +659,7 @@ const Onboarding = () => {
                     className="absolute inset-0 h-full w-full scale-110 object-cover"
                   />
                 </div>
-                <div className="flex flex-col items-start text-left">
+                <div className="flex flex-col">
                   <p className="text-sm font-semibold text-foreground">Mentor do Progresso</p>
                   <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                     <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
