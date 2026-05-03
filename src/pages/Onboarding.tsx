@@ -123,15 +123,13 @@ const Onboarding = () => {
       return;
     }
     toast.info("Procurando atualização…");
-    await checkForUpdate();
-    // Se após checagem houver nova versão, aplica direto.
-    setTimeout(async () => {
-      if (needRefresh) {
-        await applyUpdate();
-      } else {
-        toast.success("Você já está na versão mais recente.");
-      }
-    }, 1800);
+    const has = await checkForUpdate();
+    if (has) {
+      toast.success("Nova versão encontrada! Atualizando…");
+      await applyUpdate();
+    } else {
+      toast.success("Você já está na versão mais recente.");
+    }
   };
 
   /** Persiste o usuário no localStorage e navega pra Home. */
