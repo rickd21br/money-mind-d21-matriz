@@ -632,7 +632,7 @@ const Onboarding = () => {
             onClick={closeTutorial}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
-          <div className="relative w-full max-w-sm rounded-3xl border border-white/15 bg-card p-6 shadow-floating animate-bounce-in">
+          <div className="relative w-full max-w-sm rounded-3xl border border-white/15 bg-card/85 backdrop-blur-md p-6 shadow-floating animate-bounce-in">
             <button
               type="button"
               aria-label="Fechar"
@@ -643,8 +643,20 @@ const Onboarding = () => {
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-elevated">
-                <Sparkles className="h-7 w-7" />
+              <div className="relative h-20 w-20 overflow-hidden rounded-full ring-2 ring-primary/60 shadow-elevated">
+                <video
+                  src="https://jornadadoprogresso.com/wp-content/uploads/2026/05/intro-Mentor.mp4"
+                  autoPlay
+                  playsInline
+                  muted={false}
+                  controls={false}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <p className="mt-2 text-sm font-semibold text-foreground">Mentor do Progresso</p>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_hsl(var(--primary))]" />
+                Online
               </div>
               <h2 className="mt-3 text-lg font-bold text-foreground">
                 Bem-vindo ao Money Mind 21D
