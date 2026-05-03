@@ -643,22 +643,31 @@ const Onboarding = () => {
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <div className="relative h-20 w-20 overflow-hidden rounded-full ring-2 ring-primary/60 shadow-elevated">
-                <video
-                  src="https://jornadadoprogresso.com/wp-content/uploads/2026/05/intro-Mentor.mp4"
-                  autoPlay
-                  playsInline
-                  muted={false}
-                  controls={false}
-                  className="h-full w-full object-cover"
-                />
+              <div className="flex items-center gap-3">
+                <div
+                  className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-background"
+                  style={{
+                    boxShadow:
+                      "0 0 0 2px hsl(var(--primary)), 0 0 18px hsl(var(--primary) / 0.65), 0 0 36px hsl(var(--primary) / 0.35)",
+                  }}
+                >
+                  <video
+                    src="https://jornadadoprogresso.com/wp-content/uploads/2026/05/intro-Mentor.mp4"
+                    autoPlay
+                    playsInline
+                    controls={false}
+                    className="absolute inset-0 h-full w-full scale-110 object-cover"
+                  />
+                </div>
+                <div className="flex flex-col items-start text-left">
+                  <p className="text-sm font-semibold text-foreground">Mentor do Progresso</p>
+                  <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
+                    Online
+                  </div>
+                </div>
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Mentor do Progresso</p>
-              <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_hsl(var(--primary))]" />
-                Online
-              </div>
-              <h2 className="mt-3 text-lg font-bold text-foreground">
+              <h2 className="mt-4 text-lg font-bold text-foreground">
                 Bem-vindo ao Money Mind 21D
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
