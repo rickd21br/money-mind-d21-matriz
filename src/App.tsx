@@ -9,6 +9,8 @@ import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import Audios from "./pages/Audios";
 import Calculator from "./pages/Calculator";
+import MeuNegocio from "./pages/MeuNegocio";
+import Vitrine from "./pages/Vitrine";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound.tsx";
 import { useStorage } from "./hooks/useStorage";
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/perfil" element={<RequireOnboarding><Profile /></RequireOnboarding>} />
           <Route path="/audios" element={<RequireOnboarding><Audios /></RequireOnboarding>} />
           <Route path="/calculadora" element={<RequireOnboarding><Calculator /></RequireOnboarding>} />
+          <Route path="/meu-negocio" element={<RequireOnboarding><MeuNegocio /></RequireOnboarding>} />
+          <Route path="/vitrine" element={<RequireOnboarding><Vitrine /></RequireOnboarding>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
