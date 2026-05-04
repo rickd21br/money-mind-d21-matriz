@@ -30,6 +30,16 @@ const HOME_ACTIONS = [
     to: "/audios",
     image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome3.png",
   },
+  {
+    title: "Meu Negócio",
+    to: "/meu-negocio",
+    image: new URL("@/assets/card-meu-negocio.png", import.meta.url).href,
+  },
+  {
+    title: "Vitrine de Infoprodutos",
+    to: "/vitrine",
+    image: new URL("@/assets/card-vitrine.png", import.meta.url).href,
+  },
 ];
 
 const Home = () => {
