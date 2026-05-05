@@ -241,6 +241,8 @@ const Audios = () => {
   const [trophyBook, setTrophyBook] = useState<InspirationAudio | null>(null);
   const completedRef = useRef(false);
 
+  const [view, setView] = useStorage<"grid" | "list">("d21.bonusView", "list");
+
   const { savePosition, getPosition, markTrackCompleted, setRating, getRating, isBookCompleted } = useBonusProgress();
 
   const startPlayback = (track: PlayerTrack, fromTime: number) => {
