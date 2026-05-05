@@ -60,6 +60,7 @@ function BonusAudioCard({
   rating,
   onRate,
   completed,
+  variant,
 }: {
   item: InspirationAudio;
   playingId: string | null;
@@ -68,8 +69,10 @@ function BonusAudioCard({
   rating: number;
   onRate: (v: number) => void;
   completed: boolean;
+  variant: "grid" | "list";
 }) {
   const [open, setOpen] = useState(false);
+  const isList = variant === "list";
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-elevated">
@@ -79,7 +82,7 @@ function BonusAudioCard({
         className="group block w-full text-left"
         aria-expanded={open}
       >
-        <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+        <div className={cn("relative overflow-hidden bg-secondary", isList ? "aspect-[4/5]" : "aspect-[3/4]")}>
           <img
             src={item.cover}
             alt={`Capa do audiobook ${item.title}`}
@@ -87,22 +90,39 @@ function BonusAudioCard({
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
           {completed && (
-            <span className="absolute left-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-2 ring-amber-200">
-              <Trophy className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <span className={cn(
+              "absolute left-2 top-2 flex items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-2 ring-amber-200",
+              isList ? "h-9 w-9" : "h-7 w-7"
+            )}>
+              <Trophy className={isList ? "h-4 w-4" : "h-3.5 w-3.5"} strokeWidth={2.5} />
             </span>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-1.5 bg-gradient-to-t from-card/95 via-card/40 to-transparent p-2">
-            <h2 className="line-clamp-2 text-xs font-bold leading-tight text-card-foreground">{item.title}</h2>
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow">
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open && "rotate-180")} />
+          {isList && completed && (
+            <span className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-primary/90 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-glow">
+              Audiobook completo
+            </span>
+          )}
+          <div className={cn(
+            "absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-card via-card/70 to-transparent",
+            isList ? "p-4" : "p-2"
+          )}>
+            <h2 className={cn(
+              "font-bold leading-tight text-card-foreground",
+              isList ? "text-xl" : "line-clamp-2 text-xs"
+            )}>{item.title}</h2>
+            <span className={cn(
+              "shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow",
+              isList ? "h-12 w-12" : "h-7 w-7"
+            )}>
+              <ChevronDown className={cn("transition-transform duration-300", open && "rotate-180", isList ? "h-6 w-6" : "h-4 w-4")} />
             </span>
           </div>
         </div>
       </button>
 
-      <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
-        <StarRating value={rating} onChange={onRate} />
-        {completed && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+      <div className={cn("flex items-center justify-between gap-2", isList ? "px-4 py-2.5" : "px-2.5 py-1.5")}>
+        <StarRating value={rating} onChange={onRate} size={isList ? 18 : 14} />
+        {completed && <Trophy className={cn("text-amber-500", isList ? "h-5 w-5" : "h-3.5 w-3.5")} />}
       </div>
 
       <div className={cn("grid transition-all duration-500 ease-out", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
