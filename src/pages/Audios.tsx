@@ -352,7 +352,29 @@ const Audios = () => {
         onToggle={() => currentTrack && playTrack(currentTrack)}
       />
 
-      <section className="grid grid-cols-3 gap-3 pb-6">
+      <section className="mb-3 flex items-center justify-end gap-2">
+        <span className="text-[11px] font-semibold text-muted-foreground">Visualização:</span>
+        <div className="inline-flex rounded-full border border-border bg-secondary p-0.5">
+          <button
+            type="button"
+            onClick={() => setView("grid")}
+            aria-label="Visualizar em 3 colunas"
+            className={cn("flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold transition-smooth", view === "grid" ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground")}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" /> Grid
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("list")}
+            aria-label="Visualizar em lista"
+            className={cn("flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold transition-smooth", view === "list" ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground")}
+          >
+            <Rows3 className="h-3.5 w-3.5" /> Lista
+          </button>
+        </div>
+      </section>
+
+      <section className={cn("pb-6", view === "grid" ? "grid grid-cols-3 gap-3" : "flex flex-col gap-4")}>
         {INSPIRATION_LIBRARY.map((item) => (
           <BonusAudioCard
             key={item.id}
@@ -366,6 +388,7 @@ const Audios = () => {
               toast.success(`Avaliado com ${v} estrela${v > 1 ? "s" : ""}`);
             }}
             completed={isBookCompleted(item.id)}
+            variant={view}
           />
         ))}
       </section>
