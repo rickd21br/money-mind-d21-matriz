@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { INSPIRATION_LIBRARY, InspirationAudio, InspirationTrack } from "@/data/inspirationLibrary";
-import { Headphones, Pause, Play, ChevronDown, ListMusic } from "lucide-react";
+import { Headphones, Pause, Play, ChevronDown, ListMusic, Star, Trophy, RotateCcw } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useBonusProgress } from "@/hooks/useBonusProgress";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type PlayerTrack = {
   id: string;
@@ -12,63 +21,103 @@ type PlayerTrack = {
   subtitle: string;
   src: string;
   collection: string;
+  bookId: string;
+  bookTrackIds: string[];
 };
+
+const VICTORY_SRC = "/sounds/vitoria.mp3";
+
+function StarRating({ value, onChange, size = 14 }: { value: number; onChange: (v: number) => void; size?: number }) {
+  return (
+    <div className="flex items-center gap-0.5" aria-label="Avaliação">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(n);
+          }}
+          aria-label={`${n} estrela${n > 1 ? "s" : ""}`}
+          className="transition-transform active:scale-90"
+        >
+          <Star
+            style={{ width: size, height: size }}
+            className={cn(n <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground")}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function BonusAudioCard({
   item,
   playingId,
   currentId,
   onTrackPlay,
+  rating,
+  onRate,
+  completed,
 }: {
   item: InspirationAudio;
   playingId: string | null;
   currentId?: string;
   onTrackPlay: (item: InspirationAudio, track: InspirationTrack) => void;
+  rating: number;
+  onRate: (v: number) => void;
+  completed: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <article className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-card shadow-elevated">
+    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-elevated">
       <button
         type="button"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => setOpen((v) => !v)}
         className="group block w-full text-left"
         aria-expanded={open}
       >
-        <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+        <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
           <img
             src={item.cover}
             alt={`Capa do audiobook ${item.title}`}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-card/95 via-card/35 to-transparent p-4">
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">{item.folderLabel}</p>
-              <h2 className="line-clamp-2 text-lg font-bold leading-tight text-card-foreground">{item.title}</h2>
-            </div>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow">
-              <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", open && "rotate-180")} />
+          {completed && (
+            <span className="absolute left-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-2 ring-amber-200">
+              <Trophy className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </span>
+          )}
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-1.5 bg-gradient-to-t from-card/95 via-card/40 to-transparent p-2">
+            <h2 className="line-clamp-2 text-xs font-bold leading-tight text-card-foreground">{item.title}</h2>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow">
+              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open && "rotate-180")} />
             </span>
           </div>
         </div>
       </button>
 
-      <div className={cn("grid transition-all duration-500 ease-out", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}> 
+      <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
+        <StarRating value={rating} onChange={onRate} />
+        {completed && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+      </div>
+
+      <div className={cn("grid transition-all duration-500 ease-out", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
         <div className="overflow-hidden">
-          <div className="space-y-4 border-t border-border/70 p-4">
+          <div className="space-y-3 border-t border-border/70 p-3">
             <div>
-              <p className="text-sm font-semibold text-primary">{item.author}</p>
-              <p className="mt-2 text-sm leading-relaxed text-card-foreground">{item.description}</p>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.hook}</p>
-              <p className="mt-3 rounded-2xl bg-primary/10 p-3 text-sm font-semibold italic leading-snug text-primary">“{item.trigger}”</p>
+              <p className="text-[11px] font-semibold text-primary">{item.author}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-card-foreground">{item.description}</p>
+              <p className="mt-2 rounded-xl bg-primary/10 p-2 text-[11px] font-semibold italic leading-snug text-primary">"{item.trigger}"</p>
             </div>
 
-            <div className="rounded-2xl border border-border/70 bg-secondary/50 p-3">
-              <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                <ListMusic className="h-3.5 w-3.5" /> Playlist
+            <div className="rounded-xl border border-border/70 bg-secondary/50 p-2">
+              <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                <ListMusic className="h-3 w-3" /> Playlist
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {item.tracks.map((track, index) => {
                   const selected = currentId === track.id;
                   const playing = playingId === track.id;
@@ -78,16 +127,16 @@ function BonusAudioCard({
                       type="button"
                       onClick={() => onTrackPlay(item, track)}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-smooth active:scale-[0.98]",
+                        "flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-smooth active:scale-[0.98]",
                         selected ? "bg-primary text-primary-foreground shadow-soft" : "bg-card hover:bg-card/80"
                       )}
                     >
-                      <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full", selected ? "bg-primary-foreground/15" : "bg-primary/10 text-primary")}>
-                        {playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+                      <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full", selected ? "bg-primary-foreground/15" : "bg-primary/10 text-primary")}>
+                        {playing ? <Pause className="h-3 w-3" /> : <Play className="ml-0.5 h-3 w-3" />}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-bold">{track.title}</span>
-                        <span className={cn("block text-[10px]", selected ? "text-primary-foreground/80" : "text-muted-foreground")}>Faixa {index + 1} • {track.duration}</span>
+                        <span className="block truncate text-[11px] font-bold">{track.title}</span>
+                        <span className={cn("block text-[9px]", selected ? "text-primary-foreground/80" : "text-muted-foreground")}>Faixa {index + 1}</span>
                       </span>
                     </button>
                   );
@@ -141,7 +190,7 @@ function AudioPlayer({
         <select
           aria-label="Velocidade do áudio"
           value={speed}
-          onChange={(event) => onSpeedChange(Number(event.target.value))}
+          onChange={(e) => onSpeedChange(Number(e.target.value))}
           className="h-10 rounded-full border border-border bg-secondary px-2 text-xs font-bold text-secondary-foreground outline-none"
         >
           <option value={0.75}>0.75x</option>
@@ -161,30 +210,43 @@ function AudioPlayer({
 
 const Audios = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const victoryRef = useRef<HTMLAudioElement | null>(null);
   const [currentTrack, setCurrentTrack] = useState<PlayerTrack | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [playerProgress, setPlayerProgress] = useState(0);
   const [speed, setSpeed] = useState(1);
+  const [resumePrompt, setResumePrompt] = useState<{ track: PlayerTrack; saved: number } | null>(null);
+  const [trophyBook, setTrophyBook] = useState<InspirationAudio | null>(null);
+  const completedRef = useRef(false);
 
-  useEffect(() => {
+  const { savePosition, getPosition, markTrackCompleted, setRating, getRating, isBookCompleted } = useBonusProgress();
+
+  const startPlayback = (track: PlayerTrack, fromTime: number) => {
     const audio = audioRef.current;
-    if (!audio || !currentTrack) return;
-
+    if (!audio) return;
+    setCurrentTrack(track);
     setLoading(true);
+    completedRef.current = false;
+    audio.src = track.src;
     audio.playbackRate = speed;
+    const onLoaded = () => {
+      audio.currentTime = fromTime > 1 ? fromTime : 0;
+      audio.play()
+        .then(() => {
+          setLoading(false);
+          setPlayingId(track.id);
+        })
+        .catch(() => {
+          setLoading(false);
+          setPlayingId(null);
+          toast.error("Não consegui iniciar este áudio.");
+        });
+      audio.removeEventListener("loadedmetadata", onLoaded);
+    };
+    audio.addEventListener("loadedmetadata", onLoaded);
     audio.load();
-    audio.play()
-      .then(() => {
-        setLoading(false);
-        setPlayingId(currentTrack.id);
-      })
-      .catch(() => {
-        setLoading(false);
-        setPlayingId(null);
-        toast.error("Não consegui iniciar este áudio.");
-      });
-  }, [currentTrack]);
+  };
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.playbackRate = speed;
@@ -194,18 +256,20 @@ const Audios = () => {
     const audio = audioRef.current;
     if (currentTrack?.id === track.id && audio) {
       if (audio.paused) {
-        audio.play()
-          .then(() => setPlayingId(track.id))
-          .catch(() => toast.error("Não consegui retomar este áudio."));
+        audio.play().then(() => setPlayingId(track.id)).catch(() => toast.error("Não consegui retomar."));
       } else {
         audio.pause();
         setPlayingId(null);
       }
       return;
     }
-
+    const saved = getPosition(track.id);
+    if (saved > 5) {
+      setResumePrompt({ track, saved });
+      return;
+    }
     setPlayerProgress(0);
-    setCurrentTrack(track);
+    startPlayback(track, 0);
   };
 
   const selectInspirationTrack = (item: InspirationAudio, track: InspirationTrack) => {
@@ -215,13 +279,35 @@ const Audios = () => {
       subtitle: item.author,
       src: track.src,
       collection: item.title,
+      bookId: item.id,
+      bookTrackIds: item.tracks.map((t) => t.id),
     });
   };
 
   const handleTimeUpdate = () => {
     const audio = audioRef.current;
-    if (!audio || !audio.duration || !isFinite(audio.duration)) return;
-    setPlayerProgress((audio.currentTime / audio.duration) * 100);
+    if (!audio || !audio.duration || !isFinite(audio.duration) || !currentTrack) return;
+    const pct = (audio.currentTime / audio.duration) * 100;
+    setPlayerProgress(pct);
+    savePosition(currentTrack.id, audio.currentTime, audio.duration);
+
+    if (pct >= 95 && !completedRef.current) {
+      completedRef.current = true;
+      const justFinishedBook = markTrackCompleted(currentTrack.id, currentTrack.bookId, currentTrack.bookTrackIds);
+      if (justFinishedBook) {
+        const book = INSPIRATION_LIBRARY.find((b) => b.id === currentTrack.bookId);
+        if (book) {
+          setTrophyBook(book);
+          victoryRef.current?.play().catch(() => {});
+        }
+      }
+    }
+  };
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -245,7 +331,7 @@ const Audios = () => {
         onToggle={() => currentTrack && playTrack(currentTrack)}
       />
 
-      <section className="grid gap-4 pb-6 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid grid-cols-3 gap-3 pb-6">
         {INSPIRATION_LIBRARY.map((item) => (
           <BonusAudioCard
             key={item.id}
@@ -253,13 +339,18 @@ const Audios = () => {
             playingId={playingId}
             currentId={currentTrack?.id}
             onTrackPlay={selectInspirationTrack}
+            rating={getRating(item.id)}
+            onRate={(v) => {
+              setRating(item.id, v);
+              toast.success(`Avaliado com ${v} estrela${v > 1 ? "s" : ""}`);
+            }}
+            completed={isBookCompleted(item.id)}
           />
         ))}
       </section>
 
       <audio
         ref={audioRef}
-        src={currentTrack?.src}
         preload="metadata"
         onTimeUpdate={handleTimeUpdate}
         onEnded={() => {
@@ -274,9 +365,76 @@ const Audios = () => {
           setPlayingId(null);
           toast.error("Este arquivo de áudio não pôde ser carregado.");
         }}
-        onContextMenu={(event) => event.preventDefault()}
+        onContextMenu={(e) => e.preventDefault()}
         className="hidden"
       />
+      <audio ref={victoryRef} src={VICTORY_SRC} preload="auto" className="hidden" />
+
+      {/* Resume prompt */}
+      <Dialog open={!!resumePrompt} onOpenChange={(o) => !o && setResumePrompt(null)}>
+        <DialogContent className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle>Continuar de onde parou?</DialogTitle>
+            <DialogDescription>
+              Você ouviu até {resumePrompt ? formatTime(resumePrompt.saved) : "0:00"} desta faixa.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <button
+              type="button"
+              onClick={() => {
+                if (!resumePrompt) return;
+                const t = resumePrompt;
+                setResumePrompt(null);
+                setPlayerProgress(0);
+                startPlayback(t.track, t.saved);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-glow active:scale-[0.98]"
+            >
+              <Play className="h-4 w-4" /> Continuar
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!resumePrompt) return;
+                const t = resumePrompt;
+                setResumePrompt(null);
+                setPlayerProgress(0);
+                startPlayback(t.track, 0);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-secondary px-4 py-2.5 text-sm font-bold active:scale-[0.98]"
+            >
+              <RotateCcw className="h-4 w-4" /> Reiniciar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Trophy reward */}
+      <Dialog open={!!trophyBook} onOpenChange={(o) => !o && setTrophyBook(null)}>
+        <DialogContent className="max-w-xs text-center">
+          <DialogHeader>
+            <DialogTitle className="flex flex-col items-center gap-3">
+              <span className="flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-4 ring-amber-200">
+                <Trophy className="h-10 w-10" strokeWidth={2.5} />
+              </span>
+              <span>Insígnia conquistada!</span>
+            </DialogTitle>
+            <DialogDescription>
+              Você concluiu <strong>{trophyBook?.title}</strong>. Continue sua jornada de aprendizado.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setTrophyBook(null)}
+              className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-glow active:scale-[0.98]"
+            >
+              Incrível!
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </MobileShell>
   );
 };
