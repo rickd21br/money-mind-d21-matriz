@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { INSPIRATION_LIBRARY, InspirationAudio, InspirationTrack } from "@/data/inspirationLibrary";
-import { Headphones, Pause, Play, ChevronDown, ListMusic, Star, Trophy, RotateCcw } from "lucide-react";
+import { Headphones, Pause, Play, ChevronDown, ListMusic, Star, Trophy, RotateCcw, LayoutGrid, Rows3 } from "lucide-react";
+import { useStorage } from "@/hooks/useStorage";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -59,6 +60,7 @@ function BonusAudioCard({
   rating,
   onRate,
   completed,
+  variant,
 }: {
   item: InspirationAudio;
   playingId: string | null;
@@ -67,8 +69,10 @@ function BonusAudioCard({
   rating: number;
   onRate: (v: number) => void;
   completed: boolean;
+  variant: "grid" | "list";
 }) {
   const [open, setOpen] = useState(false);
+  const isList = variant === "list";
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-elevated">
@@ -78,7 +82,7 @@ function BonusAudioCard({
         className="group block w-full text-left"
         aria-expanded={open}
       >
-        <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+        <div className={cn("relative overflow-hidden bg-secondary", isList ? "aspect-[4/5]" : "aspect-[3/4]")}>
           <img
             src={item.cover}
             alt={`Capa do audiobook ${item.title}`}
@@ -86,22 +90,39 @@ function BonusAudioCard({
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
           {completed && (
-            <span className="absolute left-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-2 ring-amber-200">
-              <Trophy className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <span className={cn(
+              "absolute left-2 top-2 flex items-center justify-center rounded-full bg-amber-400 text-amber-900 shadow-glow ring-2 ring-amber-200",
+              isList ? "h-9 w-9" : "h-7 w-7"
+            )}>
+              <Trophy className={isList ? "h-4 w-4" : "h-3.5 w-3.5"} strokeWidth={2.5} />
             </span>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-1.5 bg-gradient-to-t from-card/95 via-card/40 to-transparent p-2">
-            <h2 className="line-clamp-2 text-xs font-bold leading-tight text-card-foreground">{item.title}</h2>
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow">
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open && "rotate-180")} />
+          {isList && completed && (
+            <span className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-primary/90 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-glow">
+              Audiobook completo
+            </span>
+          )}
+          <div className={cn(
+            "absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-card via-card/70 to-transparent",
+            isList ? "p-4" : "p-2"
+          )}>
+            <h2 className={cn(
+              "font-bold leading-tight text-card-foreground",
+              isList ? "text-xl" : "line-clamp-2 text-xs"
+            )}>{item.title}</h2>
+            <span className={cn(
+              "shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow",
+              isList ? "h-12 w-12" : "h-7 w-7"
+            )}>
+              <ChevronDown className={cn("transition-transform duration-300", open && "rotate-180", isList ? "h-6 w-6" : "h-4 w-4")} />
             </span>
           </div>
         </div>
       </button>
 
-      <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
-        <StarRating value={rating} onChange={onRate} />
-        {completed && <Trophy className="h-3.5 w-3.5 text-amber-500" />}
+      <div className={cn("flex items-center justify-between gap-2", isList ? "px-4 py-2.5" : "px-2.5 py-1.5")}>
+        <StarRating value={rating} onChange={onRate} size={isList ? 18 : 14} />
+        {completed && <Trophy className={cn("text-amber-500", isList ? "h-5 w-5" : "h-3.5 w-3.5")} />}
       </div>
 
       <div className={cn("grid transition-all duration-500 ease-out", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
@@ -220,6 +241,8 @@ const Audios = () => {
   const [trophyBook, setTrophyBook] = useState<InspirationAudio | null>(null);
   const completedRef = useRef(false);
 
+  const [view, setView] = useStorage<"grid" | "list">("d21.bonusView", "list");
+
   const { savePosition, getPosition, markTrackCompleted, setRating, getRating, isBookCompleted } = useBonusProgress();
 
   const startPlayback = (track: PlayerTrack, fromTime: number) => {
@@ -331,7 +354,29 @@ const Audios = () => {
         onToggle={() => currentTrack && playTrack(currentTrack)}
       />
 
-      <section className="grid grid-cols-3 gap-3 pb-6">
+      <section className="mb-3 flex items-center justify-end gap-2">
+        <span className="text-[11px] font-semibold text-muted-foreground">Visualização:</span>
+        <div className="inline-flex rounded-full border border-border bg-secondary p-0.5">
+          <button
+            type="button"
+            onClick={() => setView("grid")}
+            aria-label="Visualizar em 3 colunas"
+            className={cn("flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold transition-smooth", view === "grid" ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground")}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" /> Grid
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("list")}
+            aria-label="Visualizar em lista"
+            className={cn("flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-bold transition-smooth", view === "list" ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground")}
+          >
+            <Rows3 className="h-3.5 w-3.5" /> Lista
+          </button>
+        </div>
+      </section>
+
+      <section className={cn("pb-6", view === "grid" ? "grid grid-cols-3 gap-3" : "flex flex-col gap-4")}>
         {INSPIRATION_LIBRARY.map((item) => (
           <BonusAudioCard
             key={item.id}
@@ -345,6 +390,7 @@ const Audios = () => {
               toast.success(`Avaliado com ${v} estrela${v > 1 ? "s" : ""}`);
             }}
             completed={isBookCompleted(item.id)}
+            variant={view}
           />
         ))}
       </section>
