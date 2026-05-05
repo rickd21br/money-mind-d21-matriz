@@ -21,16 +21,6 @@ const HOME_ACTIONS = [
     image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome1.png",
   },
   {
-    title: "Calculadora",
-    to: "/calculadora",
-    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome2.png",
-  },
-  {
-    title: "Trilha de aprendizado",
-    to: "/audios",
-    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome3.png",
-  },
-  {
     title: "Meu Negócio",
     to: "/meu-negocio",
     image: new URL("@/assets/card-meu-negocio.png", import.meta.url).href,
@@ -39,6 +29,16 @@ const HOME_ACTIONS = [
     title: "Vitrine de Infoprodutos",
     to: "/vitrine",
     image: new URL("@/assets/card-vitrine.png", import.meta.url).href,
+  },
+  {
+    title: "Calculadora",
+    to: "/calculadora",
+    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome2.png",
+  },
+  {
+    title: "Trilha de aprendizado",
+    to: "/audios",
+    image: "https://jornadadoprogresso.com/wp-content/uploads/2026/04/sliderhome3.png",
   },
 ];
 
