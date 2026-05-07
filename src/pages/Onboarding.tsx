@@ -552,7 +552,7 @@ const Onboarding = () => {
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
                 autoFocus
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -566,7 +566,7 @@ const Onboarding = () => {
                 value={pinConfirm}
                 onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -627,7 +627,7 @@ const Onboarding = () => {
                 onChange={(e) => setLoginPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
                 autoFocus
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
