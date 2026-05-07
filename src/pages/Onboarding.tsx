@@ -309,19 +309,17 @@ const Onboarding = () => {
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}
       >
         {/* HEADER (logo apenas) */}
-        <header className="flex items-center">
-          <div className="flex items-center gap-3">
-            <img
-              src={logoD21}
-              alt="Desafio D21"
-              className="h-16 w-16 rounded-full drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)]"
-            />
-            <img
-              src={desafio21}
-              alt="Desafio 21 Dias - Disciplina hoje. Liberdade amanhã."
-              className="h-14 w-auto drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)] sm:h-16"
-            />
-          </div>
+        <header className="flex items-center gap-3">
+          <img
+            src={logoD21}
+            alt="Desafio D21"
+            className="h-14 w-14 shrink-0 rounded-full drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)] sm:h-16 sm:w-16"
+          />
+          <img
+            src={desafio21}
+            alt="Desafio 21 Dias - Disciplina hoje. Liberdade amanhã."
+            className="h-auto w-full max-w-[260px] flex-1 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)] sm:max-w-[320px]"
+          />
         </header>
 
         {/* HEADLINE removido — identidade visual ao lado da logomarca */}
