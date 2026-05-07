@@ -7,10 +7,9 @@ import {
   ShieldCheck,
   Wallet,
   BarChart3,
-  Sparkles,
-  Globe,
   Lock,
   KeyRound,
+  Instagram,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { usePWAUpdate } from "@/hooks/usePWAUpdate";
@@ -25,12 +24,17 @@ import {
   removePin,
   getUserDataByEmail,
 } from "@/hooks/usePin";
-import { CURRENCIES, getCurrencyOption } from "@/hooks/useCurrency";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import logoD21 from "@/assets/logo-d21.png";
+import googleLogo from "@/assets/google-logo.png";
+import appleLogo from "@/assets/apple-logo.png";
 
 const BG_URL = "https://jornadadoprogresso.com/wp-content/uploads/2026/04/onboarding-bg.png";
 const TUTORIAL_SEEN_KEY = "d21.tutorialSeen";
+const APP_VERSION = "6.5.26BR";
+const SHOWCASE_AUDIO = "/sounds/transicao-botoes-login.mp3";
+const SHOWCASE_LABELS = ["Ajuda", "Atualizações", "Instalar app"] as const;
 
 interface BIPEvent extends Event {
   prompt: () => Promise<void>;
@@ -50,12 +54,17 @@ const Onboarding = () => {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState(user.name === "Visitante" ? "" : user.name);
   const [email, setEmail] = useState(user.email || "");
-  const [currency, setCurrency] = useState<string>("BRL");
+  const currency = "BRL";
   const [installPrompt, setInstallPrompt] = useState<BIPEvent | null>(null);
   const { checking, checkForUpdate, applyUpdate, needRefresh } = usePWAUpdate();
 
   // Tutorial popup
   const [tutorialOpen, setTutorialOpen] = useState(false);
+
+  // Showcase dos 3 botões superiores (Ajuda, Atualizações, Instalar app)
+  // -1 = inativo; 0..2 = botão em destaque
+  const [showcaseIdx, setShowcaseIdx] = useState<number>(-1);
+  const showcaseAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // PIN — criação
   const [pin, setPin] = useState("");
@@ -96,6 +105,37 @@ const Onboarding = () => {
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
+
+  // Apresentação automática dos 3 botões a cada abertura do app
+  useEffect(() => {
+    let cancelled = false;
+    const start = setTimeout(() => {
+      if (cancelled) return;
+      setShowcaseIdx(0);
+    }, 800);
+    return () => {
+      cancelled = true;
+      clearTimeout(start);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (showcaseIdx < 0) return;
+    try {
+      if (!showcaseAudioRef.current) {
+        showcaseAudioRef.current = new Audio(SHOWCASE_AUDIO);
+        showcaseAudioRef.current.volume = 0.6;
+      }
+      showcaseAudioRef.current.currentTime = 0;
+      void showcaseAudioRef.current.play().catch(() => {});
+    } catch {
+      /* ignore */
+    }
+    const t = setTimeout(() => {
+      setShowcaseIdx((i) => (i >= SHOWCASE_LABELS.length - 1 ? -1 : i + 1));
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [showcaseIdx]);
 
   const handleInstall = async () => {
     if (installPrompt) {
@@ -270,13 +310,15 @@ const Onboarding = () => {
         {/* HEADER (logo apenas) */}
         <header className="flex items-center">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-elevated">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img
+              src={logoD21}
+              alt="Desafio D21"
+              className="h-12 w-12 rounded-full shadow-elevated"
+            />
             <div className="leading-tight">
               <p className="text-sm font-bold text-white">D21 App</p>
               <p className="text-[10px] uppercase tracking-wide text-white/70">
-                Finanças Controladas V1.1
+                Boletos Pagos
               </p>
             </div>
           </div>
@@ -309,8 +351,17 @@ const Onboarding = () => {
                   aria-label="Ajuda / tutorial"
                   title="Ajuda"
                   onClick={() => setTutorialOpen((v) => !v)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                    showcaseIdx === 0
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
+                  }`}
                 >
+                  {showcaseIdx === 0 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Ajuda
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -329,10 +380,19 @@ const Onboarding = () => {
                   aria-label="Atualizar app"
                   title={needRefresh ? "Nova versão disponível!" : "Verificar atualização"}
                   onClick={handleUpdate}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30 ${
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
                     checking ? "opacity-70" : ""
+                  } ${
+                    showcaseIdx === 1
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
                   }`}
                 >
+                  {showcaseIdx === 1 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Atualizações
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -354,8 +414,17 @@ const Onboarding = () => {
                   aria-label="Instalar app"
                   title="Instalar app"
                   onClick={handleInstall}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                    showcaseIdx === 2
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
+                  }`}
                 >
+                  {showcaseIdx === 2 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Instalar app
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -408,28 +477,24 @@ const Onboarding = () => {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="currency" className="text-xs font-medium text-white/85">
-                  Moeda principal
-                </label>
-                <div className="relative">
-                  <Globe className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <select
-                    id="currency"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="h-12 w-full appearance-none rounded-xl border border-white/20 bg-white/95 pl-10 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {CURRENCIES.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.flag} {c.code} — {c.label} ({c.symbol})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-[10px] text-white/60">
-                  Selecione a moeda usada no seu país. Atual: {getCurrencyOption(currency).symbol}
-                </p>
+              {/* Login social (visual / fake) */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => toast.info("Em breve: login com Google")}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/95 text-sm font-semibold text-foreground transition hover:bg-white"
+                >
+                  <img src={googleLogo} alt="" className="h-4 w-4" />
+                  Google
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast.info("Em breve: login com Apple")}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/25 bg-black text-sm font-semibold text-white transition hover:bg-black/85"
+                >
+                  <img src={appleLogo} alt="" className="h-4 w-4 invert" />
+                  Apple
+                </button>
               </div>
 
               <Button
@@ -487,7 +552,7 @@ const Onboarding = () => {
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
                 autoFocus
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -501,7 +566,7 @@ const Onboarding = () => {
                 value={pinConfirm}
                 onChange={(e) => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -562,7 +627,7 @@ const Onboarding = () => {
                 onChange={(e) => setLoginPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
                 placeholder="••••"
                 autoFocus
-                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-4 text-center text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="h-14 w-full rounded-xl border border-white/20 bg-white/95 px-5 text-left text-2xl tracking-[0.6em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -614,6 +679,20 @@ const Onboarding = () => {
               </span>
             </li>
           </ul>
+          <div className="mt-4 flex items-end justify-between gap-3 text-[10px] text-white/60">
+            <div className="leading-tight">
+              <p>Criado por <span className="font-semibold text-white/80">Wanderson Richard</span></p>
+              <a
+                href="https://instagram.com/eu.rickbr"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-0.5 inline-flex items-center gap-1 text-white/70 hover:text-white"
+              >
+                <Instagram className="h-3 w-3" /> @eu.rickbr
+              </a>
+            </div>
+            <span className="font-mono text-white/55">v{APP_VERSION}</span>
+          </div>
         </footer>
       </div>
 
