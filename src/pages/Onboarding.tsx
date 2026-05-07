@@ -351,8 +351,17 @@ const Onboarding = () => {
                   aria-label="Ajuda / tutorial"
                   title="Ajuda"
                   onClick={() => setTutorialOpen((v) => !v)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                    showcaseIdx === 0
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
+                  }`}
                 >
+                  {showcaseIdx === 0 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Ajuda
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -371,10 +380,19 @@ const Onboarding = () => {
                   aria-label="Atualizar app"
                   title={needRefresh ? "Nova versão disponível!" : "Verificar atualização"}
                   onClick={handleUpdate}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30 ${
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
                     checking ? "opacity-70" : ""
+                  } ${
+                    showcaseIdx === 1
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
                   }`}
                 >
+                  {showcaseIdx === 1 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Atualizações
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -396,8 +414,17 @@ const Onboarding = () => {
                   aria-label="Instalar app"
                   title="Instalar app"
                   onClick={handleInstall}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition hover:bg-white/30"
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                    showcaseIdx === 2
+                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      : ""
+                  }`}
                 >
+                  {showcaseIdx === 2 && (
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                      Instalar app
+                    </span>
+                  )}
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
