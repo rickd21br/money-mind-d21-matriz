@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import logoD21 from "@/assets/logo-d21.png";
+import desafio21 from "@/assets/desafio-21-dias.png";
 import googleLogo from "@/assets/google-logo.png";
 import appleLogo from "@/assets/apple-logo.png";
 
@@ -315,27 +316,15 @@ const Onboarding = () => {
               alt="Desafio D21"
               className="h-16 w-16 rounded-full drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)]"
             />
-            <div className="leading-tight">
-              <p className="text-sm font-bold text-white">D21 App</p>
-              <p className="text-[10px] uppercase tracking-wide text-white/70">
-                Boletos Pagos
-              </p>
-            </div>
+            <img
+              src={desafio21}
+              alt="Desafio 21 Dias - Disciplina hoje. Liberdade amanhã."
+              className="h-14 w-auto drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)] sm:h-16"
+            />
           </div>
         </header>
 
-        {/* HEADLINE */}
-        <div className="mt-10">
-          <h1 className="text-left text-[24px] font-bold leading-tight text-white sm:text-4xl">
-            Transforme suas finanças em{" "}
-            <span style={{ color: "hsl(var(--primary-glow))" }}>resultados reais.</span>
-          </h1>
-          <p className="mt-3 max-w-sm text-left text-sm text-white/75 sm:text-base">
-            {step === "form" && "Confirme seus dados para personalizar sua experiência no app."}
-            {step === "createPin" && "Crie um PIN de 4 dígitos para acessar mais rápido."}
-            {step === "pinLogin" && "Digite seu PIN para entrar no app."}
-          </p>
-        </div>
+        {/* HEADLINE removido — identidade visual ao lado da logomarca */}
 
         {/* ============ STEP: FORM ============ */}
         {step === "form" && (
