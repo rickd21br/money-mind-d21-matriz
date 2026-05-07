@@ -7,10 +7,9 @@ import {
   ShieldCheck,
   Wallet,
   BarChart3,
-  Sparkles,
-  Globe,
   Lock,
   KeyRound,
+  Instagram,
 } from "lucide-react";
 import { useUser } from "@/hooks/useFinance";
 import { usePWAUpdate } from "@/hooks/usePWAUpdate";
@@ -25,12 +24,17 @@ import {
   removePin,
   getUserDataByEmail,
 } from "@/hooks/usePin";
-import { CURRENCIES, getCurrencyOption } from "@/hooks/useCurrency";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import logoD21 from "@/assets/logo-d21.png";
+import googleLogo from "@/assets/google-logo.png";
+import appleLogo from "@/assets/apple-logo.png";
 
 const BG_URL = "https://jornadadoprogresso.com/wp-content/uploads/2026/04/onboarding-bg.png";
 const TUTORIAL_SEEN_KEY = "d21.tutorialSeen";
+const APP_VERSION = "6.5.26BR";
+const SHOWCASE_AUDIO = "/sounds/transicao-botoes-login.mp3";
+const SHOWCASE_LABELS = ["Ajuda", "Atualizações", "Instalar app"] as const;
 
 interface BIPEvent extends Event {
   prompt: () => Promise<void>;
@@ -50,12 +54,17 @@ const Onboarding = () => {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState(user.name === "Visitante" ? "" : user.name);
   const [email, setEmail] = useState(user.email || "");
-  const [currency, setCurrency] = useState<string>("BRL");
+  const currency = "BRL";
   const [installPrompt, setInstallPrompt] = useState<BIPEvent | null>(null);
   const { checking, checkForUpdate, applyUpdate, needRefresh } = usePWAUpdate();
 
   // Tutorial popup
   const [tutorialOpen, setTutorialOpen] = useState(false);
+
+  // Showcase dos 3 botões superiores (Ajuda, Atualizações, Instalar app)
+  // -1 = inativo; 0..2 = botão em destaque
+  const [showcaseIdx, setShowcaseIdx] = useState<number>(-1);
+  const showcaseAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // PIN — criação
   const [pin, setPin] = useState("");
@@ -96,6 +105,37 @@ const Onboarding = () => {
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
+
+  // Apresentação automática dos 3 botões a cada abertura do app
+  useEffect(() => {
+    let cancelled = false;
+    const start = setTimeout(() => {
+      if (cancelled) return;
+      setShowcaseIdx(0);
+    }, 800);
+    return () => {
+      cancelled = true;
+      clearTimeout(start);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (showcaseIdx < 0) return;
+    try {
+      if (!showcaseAudioRef.current) {
+        showcaseAudioRef.current = new Audio(SHOWCASE_AUDIO);
+        showcaseAudioRef.current.volume = 0.6;
+      }
+      showcaseAudioRef.current.currentTime = 0;
+      void showcaseAudioRef.current.play().catch(() => {});
+    } catch {
+      /* ignore */
+    }
+    const t = setTimeout(() => {
+      setShowcaseIdx((i) => (i >= SHOWCASE_LABELS.length - 1 ? -1 : i + 1));
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [showcaseIdx]);
 
   const handleInstall = async () => {
     if (installPrompt) {
