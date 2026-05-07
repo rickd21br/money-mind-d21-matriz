@@ -309,11 +309,11 @@ const Onboarding = () => {
       >
         {/* HEADER (logo apenas) */}
         <header className="flex items-center">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <img
               src={logoD21}
               alt="Desafio D21"
-              className="h-12 w-12 rounded-full shadow-elevated"
+              className="h-16 w-16 rounded-full drop-shadow-[0_8px_18px_rgba(0,0,0,0.65)]"
             />
             <div className="leading-tight">
               <p className="text-sm font-bold text-white">D21 App</p>
@@ -345,20 +345,20 @@ const Onboarding = () => {
               className="relative mt-7 space-y-3.5 rounded-3xl border border-white/15 bg-white/10 p-5 shadow-floating backdrop-blur-xl"
             >
               {/* Grupo de ações: ajuda, atualizar, instalar */}
-              <div className="absolute -top-4 right-3 z-10 flex items-center gap-2">
+              <div className="absolute -top-4 right-3 z-10 flex items-center gap-3.5">
                 <button
                   type="button"
                   aria-label="Ajuda / tutorial"
                   title="Ajuda"
                   onClick={() => setTutorialOpen((v) => !v)}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                  className={`relative flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 ${
                     showcaseIdx === 0
-                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      ? "scale-125 ring-2 ring-white/60 shadow-[0_0_18px_rgba(255,255,255,0.55),0_0_36px_rgba(255,255,255,0.25)]"
                       : ""
                   }`}
                 >
                   {showcaseIdx === 0 && (
-                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold tracking-wide text-white animate-fade-in [text-shadow:0_0_6px_rgba(255,255,255,0.9),0_0_14px_rgba(255,255,255,0.55),0_2px_4px_rgba(0,0,0,0.85)]">
                       Ajuda
                     </span>
                   )}
@@ -370,7 +370,7 @@ const Onboarding = () => {
                     strokeWidth={1.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-[18px] w-[18px]"
+                    className="h-[22px] w-[22px]"
                   >
                     <path d="M16.712 4.33a9.027 9.027 0 0 1 1.652 1.306c.51.51.944 1.064 1.306 1.652M16.712 4.33l-3.448 4.138m3.448-4.138a9.014 9.014 0 0 0-9.424 0M19.67 7.288l-4.138 3.448m4.138-3.448a9.014 9.014 0 0 1 0 9.424m-4.138-5.976a3.736 3.736 0 0 0-.88-1.388 3.737 3.737 0 0 0-1.388-.88m2.268 2.268a3.765 3.765 0 0 1 0 2.528m-2.268-4.796a3.765 3.765 0 0 0-2.528 0m4.796 4.796c-.181.506-.475.982-.88 1.388a3.736 3.736 0 0 1-1.388.88m2.268-2.268 4.138 3.448m0 0a9.027 9.027 0 0 1-1.306 1.652c-.51.51-1.064.944-1.652 1.306m0 0-3.448-4.138m3.448 4.138a9.014 9.014 0 0 1-9.424 0m5.976-4.138a3.765 3.765 0 0 1-2.528 0m0 0a3.736 3.736 0 0 1-1.388-.88 3.737 3.737 0 0 1-.88-1.388m2.268 2.268L7.288 19.67m0 0a9.024 9.024 0 0 1-1.652-1.306 9.027 9.027 0 0 1-1.306-1.652m0 0 4.138-3.448M4.33 16.712a9.014 9.014 0 0 1 0-9.424m4.138 5.976a3.765 3.765 0 0 1 0-2.528m0 0c.181-.506.475-.982.88-1.388a3.736 3.736 0 0 1 1.388-.88m-2.268 2.268L4.33 7.288m6.406 1.18L7.288 4.33m0 0a9.024 9.024 0 0 0-1.652 1.306A9.025 9.025 0 0 0 4.33 7.288" />
                   </svg>
@@ -380,16 +380,16 @@ const Onboarding = () => {
                   aria-label="Atualizar app"
                   title={needRefresh ? "Nova versão disponível!" : "Verificar atualização"}
                   onClick={handleUpdate}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                  className={`relative flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 ${
                     checking ? "opacity-70" : ""
                   } ${
                     showcaseIdx === 1
-                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      ? "scale-125 ring-2 ring-white/60 shadow-[0_0_18px_rgba(255,255,255,0.55),0_0_36px_rgba(255,255,255,0.25)]"
                       : ""
                   }`}
                 >
                   {showcaseIdx === 1 && (
-                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold tracking-wide text-white animate-fade-in [text-shadow:0_0_6px_rgba(255,255,255,0.9),0_0_14px_rgba(255,255,255,0.55),0_2px_4px_rgba(0,0,0,0.85)]">
                       Atualizações
                     </span>
                   )}
@@ -401,7 +401,7 @@ const Onboarding = () => {
                     strokeWidth={1.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className={`h-[18px] w-[18px] ${checking ? "animate-spin" : ""}`}
+                    className={`h-[22px] w-[22px] ${checking ? "animate-spin" : ""}`}
                   >
                     <path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
                   </svg>
@@ -414,14 +414,14 @@ const Onboarding = () => {
                   aria-label="Instalar app"
                   title="Instalar app"
                   onClick={handleInstall}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30 ${
+                  className={`relative flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 ${
                     showcaseIdx === 2
-                      ? "scale-125 ring-2 ring-primary shadow-[0_0_18px_hsl(var(--primary)/0.7)]"
+                      ? "scale-125 ring-2 ring-white/60 shadow-[0_0_18px_rgba(255,255,255,0.55),0_0_36px_rgba(255,255,255,0.25)]"
                       : ""
                   }`}
                 >
                   {showcaseIdx === 2 && (
-                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-elevated animate-fade-in">
+                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold tracking-wide text-white animate-fade-in [text-shadow:0_0_6px_rgba(255,255,255,0.9),0_0_14px_rgba(255,255,255,0.55),0_2px_4px_rgba(0,0,0,0.85)]">
                       Instalar app
                     </span>
                   )}
@@ -433,7 +433,7 @@ const Onboarding = () => {
                     strokeWidth={1.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-[18px] w-[18px]"
+                    className="h-[22px] w-[22px]"
                   >
                     <path d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
                   </svg>
