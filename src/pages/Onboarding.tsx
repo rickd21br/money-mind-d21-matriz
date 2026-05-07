@@ -310,13 +310,15 @@ const Onboarding = () => {
         {/* HEADER (logo apenas) */}
         <header className="flex items-center">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-elevated">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img
+              src={logoD21}
+              alt="Desafio D21"
+              className="h-12 w-12 rounded-full shadow-elevated"
+            />
             <div className="leading-tight">
               <p className="text-sm font-bold text-white">D21 App</p>
               <p className="text-[10px] uppercase tracking-wide text-white/70">
-                Finanças Controladas V1.1
+                Boletos Pagos
               </p>
             </div>
           </div>
@@ -448,28 +450,24 @@ const Onboarding = () => {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="currency" className="text-xs font-medium text-white/85">
-                  Moeda principal
-                </label>
-                <div className="relative">
-                  <Globe className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <select
-                    id="currency"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="h-12 w-full appearance-none rounded-xl border border-white/20 bg-white/95 pl-10 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {CURRENCIES.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.flag} {c.code} — {c.label} ({c.symbol})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-[10px] text-white/60">
-                  Selecione a moeda usada no seu país. Atual: {getCurrencyOption(currency).symbol}
-                </p>
+              {/* Login social (visual / fake) */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => toast.info("Em breve: login com Google")}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/95 text-sm font-semibold text-foreground transition hover:bg-white"
+                >
+                  <img src={googleLogo} alt="" className="h-4 w-4" />
+                  Google
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast.info("Em breve: login com Apple")}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/25 bg-black text-sm font-semibold text-white transition hover:bg-black/85"
+                >
+                  <img src={appleLogo} alt="" className="h-4 w-4 invert" />
+                  Apple
+                </button>
               </div>
 
               <Button
